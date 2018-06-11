@@ -22,14 +22,20 @@
     <ClInclude Include="Include\DebugPrint.h" />
     <ClInclude Include="Include\FVector.h" />
     <ClInclude Include="Include\ImageWriter.h" />
+    <ClInclude Include="Include\Object.h" />
     <ClInclude Include="Include\Ray.h" />
+    <ClInclude Include="Include\Sphere.h" />
     <ClInclude Include="Include\stb\stb_image.h" />
     <ClInclude Include="Include\stb\stb_image_write.h" />
     <ClInclude Include="Include\Timer.h" />
     <ClInclude Include="Include\Types.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\DebugPrint.cpp" />
+    <ClCompile Include="Source\ImageWriter.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Sphere.cpp" />
+    <ClCompile Include="Source\Timer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

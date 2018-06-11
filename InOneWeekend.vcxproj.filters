@@ -42,9 +42,27 @@
     <ClInclude Include="Include\DebugPrint.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Object.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Sphere.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DebugPrint.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ImageWriter.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Sphere.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Timer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
