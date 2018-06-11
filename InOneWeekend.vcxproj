@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\FVector.h" />
     <ClInclude Include="Include\ImageWriter.h" />
     <ClInclude Include="Include\stb\stb_image.h" />
     <ClInclude Include="Include\stb\stb_image_write.h" />

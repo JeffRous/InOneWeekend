@@ -4,6 +4,7 @@
 
 #include "Types.h"
 #include "ImageWriter.h"
+#include "FVector.h"
 
 #define WIDTH 200
 #define HEIGHT 100
@@ -18,17 +19,11 @@ int main()
 	{
 		for (int i = 0; i < WIDTH; i++)
 		{
-			float r = float(i) / float(WIDTH);
-			float g = float(j) / float(HEIGHT);
-			float b = 0.2f;
+			FVector col(float(i) / float(WIDTH), float(j) / float(HEIGHT), 0.2f);
 
-			uint8 cr = uint8(255.99*r);
-			uint8 cg = uint8(255.99*g);
-			uint8 cb = uint8(255.99*b);
-
-			(*ImageBufferWriter++) = cr;
-			(*ImageBufferWriter++) = cg;
-			(*ImageBufferWriter++) = cb;
+			(*ImageBufferWriter++) = uint8(255.99*col.r);
+			(*ImageBufferWriter++) = uint8(255.99*col.g);
+			(*ImageBufferWriter++) = uint8(255.99*col.b);
 		}
 	}
 
