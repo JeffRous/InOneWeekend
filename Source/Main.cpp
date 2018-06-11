@@ -2,8 +2,8 @@
 	Ray tracing in one weekend project
 */
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb/stb_image_write.h"
+#include "Types.h"
+#include "ImageWriter.h"
 
 #define WIDTH 200
 #define HEIGHT 100
@@ -11,8 +11,8 @@
 
 int main()
 {
-	unsigned char ImageBuffer[WIDTH * HEIGHT * PIXEL_COMPONENTS];
-	unsigned char *ImageBufferWriter = ImageBuffer;
+	uint8 ImageBuffer[WIDTH * HEIGHT * PIXEL_COMPONENTS];
+	uint8 *ImageBufferWriter = ImageBuffer;
 
 	for (int j = HEIGHT-1; j >= 0; j--)
 	{
@@ -22,9 +22,9 @@ int main()
 			float g = float(j) / float(HEIGHT);
 			float b = 0.2f;
 
-			unsigned char cr = unsigned char(255.99*r);
-			unsigned char cg = unsigned char(255.99*g);
-			unsigned char cb = unsigned char(255.99*b);
+			uint8 cr = uint8(255.99*r);
+			uint8 cg = uint8(255.99*g);
+			uint8 cb = uint8(255.99*b);
 
 			(*ImageBufferWriter++) = cr;
 			(*ImageBufferWriter++) = cg;
@@ -32,9 +32,7 @@ int main()
 		}
 	}
 
-	stbi_write_png("output.png", WIDTH, HEIGHT, PIXEL_COMPONENTS, ImageBuffer, 0);
-	//stbi_write_bmp("output.bmp", WIDTH, HEIGHT, PIXEL_COMPONENTS, ImageBuffer);
-	//stbi_write_jpg("output.jpg", WIDTH, HEIGHT, PIXEL_COMPONENTS, ImageBuffer, 100);
+	ImageFileWriter::WriteImage("output.png", ImageWriterType::PNG, WIDTH, HEIGHT, PIXEL_COMPONENTS, ImageBuffer);
 
 	return 0;
 }

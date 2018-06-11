@@ -24,6 +24,12 @@
     <ClInclude Include="Include\stb\stb_image.h">
       <Filter>Include\stb</Filter>
     </ClInclude>
+    <ClInclude Include="Include\ImageWriter.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Types.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp">
