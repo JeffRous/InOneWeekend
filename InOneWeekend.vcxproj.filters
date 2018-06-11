@@ -36,6 +36,12 @@
     <ClInclude Include="Include\Ray.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Timer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DebugPrint.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp">

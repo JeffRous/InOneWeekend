@@ -2,10 +2,13 @@
 	Ray tracing in one weekend project
 */
 
+#include <stdio.h>
 #include "Types.h"
 #include "ImageWriter.h"
 #include "FVector.h"
 #include "Ray.h"
+#include "Timer.h"
+#include "DebugPrint.h"
 
 #define WIDTH 200
 #define HEIGHT 100
@@ -13,6 +16,8 @@
 
 int main()
 {
+	InitTiming();
+
 	uint8 ImageBuffer[WIDTH * HEIGHT * PIXEL_COMPONENTS];
 	uint8 *ImageBufferWriter = ImageBuffer;
 
@@ -24,6 +29,9 @@ int main()
 	FVector Vertical(0.0f, 2.0f, 0.0f);
 
 	FVector Origin(0.0f, 0.0f, 0.0f);
+
+	Timer t;
+	t.Start();
 
 	for (int j = HEIGHT-1; j >= 0; j--)
 	{
@@ -41,7 +49,10 @@ int main()
 		}
 	}
 
+	double Elapsed = t.Stop();
+
 	ImageFileWriter::WriteImage("output.png", ImageWriterType::PNG, WIDTH, HEIGHT, PIXEL_COMPONENTS, ImageBuffer);
+	DebugPrint("Ray traversal time: %lf ms \n", Elapsed);
 
 	return 0;
 }
