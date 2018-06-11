@@ -84,12 +84,12 @@ inline FVector operator/(const FVector &v, float t)
 	return FVector(v.e[0] / t, v.e[1] / t, v.e[2] / t);
 }
 
-inline float dot(const FVector &v1, const FVector &v2)
+inline float Dot(const FVector &v1, const FVector &v2)
 {
 	return v1.e[0] * v2.e[0] + v1.e[1] * v2.e[1] + v1.e[2] * v2.e[2];
 }
 
-inline FVector cross(const FVector &v1, const FVector &v2)
+inline FVector Cross(const FVector &v1, const FVector &v2)
 {
 	return FVector((v1.e[1] * v2.e[2] - v1.e[2] * v2.e[1]),
 		(-(v1.e[0] * v2.e[2] - v1.e[2] * v2.e[0])),
