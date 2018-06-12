@@ -2,46 +2,28 @@
 	Ray tracing in one weekend project
 */
 
-#include <stdio.h>
 #include "Types.h"
 #include "ImageWriter.h"
 #include "FVector.h"
 #include "Ray.h"
 #include "Timer.h"
+#include "Object.h"
+#include "Sphere.h"
 #include "DebugPrint.h"
 
 #define WIDTH 200
 #define HEIGHT 100
 #define PIXEL_COMPONENTS 3
 
-float HitSphere(const FVector &Center, float Radius, const Ray& R)
-{
-	FVector Oc = R.GetOrigin() - Center;
-	float a = Dot(R.GetDirection(), R.GetDirection());
-	float b = 2.0f * Dot(Oc, R.GetDirection());
-	float c = Dot(Oc, Oc) - Radius * Radius;
-	float Discriminant = b * b - 4 * a*c;
-	if (Discriminant < 0)
-	{
-		return -1.0f;
-	}
-	else
-	{
-		return float((-b - sqrt(Discriminant)) / (2.0*a));
-	}
-}
-
-FVector Color(const Ray& R)
+FVector Color(const Ray& R, IObject *World)
 {
 	FVector StartColor(1.0f, 1.0f, 1.0f);
 	FVector EndColor(0.5f, 0.7f, 1.0f);
 
-	float t = HitSphere(FVector(0, 0, -1), 0.5, R);
-
-	if (t > 0.0f)
+	FHit Hit;
+	if (World->Hit(R, 0.0, FLT_MAX, Hit))
 	{
-		FVector N = UnitVector(R.PointAt(t) - FVector(0, 0, -1));
-		return 0.5 * FVector(N.x + 1, N.y + 1, N.z + 1);
+		return 0.5*FVector(Hit.Normal.x + 1, Hit.Normal.y + 1, Hit.Normal.z + 1);
 	}
 	else
 	{
@@ -64,6 +46,12 @@ int main()
 
 	FVector Origin(0.0f, 0.0f, 0.0f);
 
+	IObject *List[2];
+	List[0] = new Sphere(FVector(0, 0, -1), 0.5);
+	List[1] = new Sphere(FVector(0, -100.5, -1), 100);
+
+	IObject *World = new ObjectList(List, 2);
+
 	Timer t;
 	t.Start();
 
@@ -74,12 +62,13 @@ int main()
 			float u = float(i) / float(WIDTH);
 			float v = float(j) / float(HEIGHT);
 
-			Ray r(Origin, LowerLeft + u * Horizontal + v * Vertical);
-			FVector col = Color(r);
+			Ray R(Origin, LowerLeft + u * Horizontal + v * Vertical);
+			FVector P = R.PointAtT(2.0);
+			FVector PixelColor = Color(R, World);
 
-			(*ImageBufferWriter++) = uint8(255.99*col.r);
-			(*ImageBufferWriter++) = uint8(255.99*col.g);
-			(*ImageBufferWriter++) = uint8(255.99*col.b);
+			(*ImageBufferWriter++) = uint8(255.99*PixelColor.r);
+			(*ImageBufferWriter++) = uint8(255.99*PixelColor.g);
+			(*ImageBufferWriter++) = uint8(255.99*PixelColor.b);
 		}
 	}
 

@@ -34,6 +34,7 @@
     <ClCompile Include="Source\DebugPrint.cpp" />
     <ClCompile Include="Source\ImageWriter.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Object.cpp" />
     <ClCompile Include="Source\Sphere.cpp" />
     <ClCompile Include="Source\Timer.cpp" />
   </ItemGroup>
