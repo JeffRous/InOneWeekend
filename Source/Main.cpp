@@ -2,6 +2,7 @@
 	Ray tracing in one weekend project
 */
 
+#include <ppl.h>
 #include "utils/Utils.h"
 #include "FVector.h"
 #include "Ray.h"
@@ -63,7 +64,8 @@ int main()
 	Timer t;
 	t.Start();
 
-	for (int32 j = HEIGHT-1; j >= 0; j--)
+	concurrency::parallel_for(int32(0), HEIGHT, [&](int32 j)
+	//for (int32 j = 0; j < HEIGHT; j++)
 	{
 		for (int32 i = 0; i < WIDTH; i++)
 		{
@@ -83,16 +85,18 @@ int main()
 			PixelColor /= float(SAMPLES);
 			PixelColor = FVector(sqrtf(PixelColor.r), sqrtf(PixelColor.g), sqrtf(PixelColor.b));
 
-			(*ImageBufferWriter++) = uint8(255.99*PixelColor.r);
-			(*ImageBufferWriter++) = uint8(255.99*PixelColor.g);
-			(*ImageBufferWriter++) = uint8(255.99*PixelColor.b);
+			uint32 PixelToWrite = ((HEIGHT-1-j)*WIDTH*PIXEL_COMPONENTS) + (i*PIXEL_COMPONENTS);
+
+			ImageBuffer[PixelToWrite + 0] = uint8(255.99*PixelColor.r);
+			ImageBuffer[PixelToWrite + 1] = uint8(255.99*PixelColor.g);
+			ImageBuffer[PixelToWrite + 2] = uint8(255.99*PixelColor.b);
 		}
-	}
+	});
 
 	double Elapsed = t.Stop();
 
 	ImageFileWriter::WriteImage("output.png", ImageWriterType::PNG, WIDTH, HEIGHT, PIXEL_COMPONENTS, ImageBuffer);
-	DebugPrint("Ray traversal time: %lf ms \n", Elapsed);
+	DebugPrint("Ray traversal time: %lf s \n", Elapsed/1000.0);
 
 	delete ImageBuffer;
 	ImageBuffer = nullptr;
