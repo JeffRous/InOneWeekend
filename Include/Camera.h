@@ -1,9 +1,9 @@
 #pragma once
 
-class Camera
+class FCamera
 {
 public:
-	Camera()
+	FCamera()
 	{
 		LowerLeft = FVector(-2.0f, -1.0f, -1.0f);
 		Horizontal = FVector(4.0f, 0.0f, 0.0f);
@@ -11,7 +11,7 @@ public:
 		Origin = FVector(0.0f, 0.0f, 0.0f);
 	}
 
-	Camera(FVector& InOrigin, FVector& InLowerLeft, FVector& InHorizontal, FVector& InVertical)
+	FCamera(FVector& InOrigin, FVector& InLowerLeft, FVector& InHorizontal, FVector& InVertical)
 	{
 		Origin = InOrigin;
 		LowerLeft = InLowerLeft;
