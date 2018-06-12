@@ -50,13 +50,14 @@ int main()
 	uint8 *ImageBuffer = new uint8[WIDTH * HEIGHT * PIXEL_COMPONENTS];
 	uint8 *ImageBufferWriter = ImageBuffer;
 
-	IObject *List[4];
-	List[0] = new Sphere(FVector(0.0f, 0.0f, -1.0f), 0.5f, new Lambertian(FVector(0.8f,0.3f,0.3f)));
+	IObject *List[5];
+	List[0] = new Sphere(FVector(0.0f, 0.0f, -1.0f), 0.5f, new Lambertian(FVector(0.1f,0.2f,0.5f)));
 	List[1] = new Sphere(FVector(0.0f, -100.5f, -1.0f), 100.0f, new Lambertian(FVector(0.8f,0.8f,0.0f)));
 	List[2] = new Sphere(FVector(1.0f, 0.0f, -1.0f), 0.5f, new Metal(FVector(0.8f, 0.6f, 0.2f), 0.3f));
-	List[3] = new Sphere(FVector(-1.0f, 0.0f, -1.0f), 0.5f, new Metal(FVector(0.8f, 0.8f, 0.8f), 1.0f));
+	List[3] = new Sphere(FVector(-1.0f, 0.0f, -1.0f), 0.5f, new Dielectric(1.5f));
+	List[4] = new Sphere(FVector(-1.0f, 0.0f, -1.0f), -0.45f, new Dielectric(1.5f));
 
-	IObject *World = new ObjectList(List, 4);
+	IObject *World = new ObjectList(List, 5);
 	FCamera Camera;
 
 	Timer t;

@@ -32,3 +32,13 @@ private:
 	FVector Albedo;
 	float Fuzz;
 };
+
+class Dielectric : public IMaterial
+{
+public:
+	Dielectric(float InRefIndex) : RefIndex(InRefIndex) {}
+
+	virtual bool Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const;
+private:
+	float RefIndex;
+};
