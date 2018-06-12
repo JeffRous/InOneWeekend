@@ -16,6 +16,12 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Include\utils">
+      <UniqueIdentifier>{c73faa21-db23-445d-834f-c91e1b195ffe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\utils">
+      <UniqueIdentifier>{78affd95-6f92-4871-afb7-170077886609}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\stb\stb_image_write.h">
@@ -24,22 +30,10 @@
     <ClInclude Include="Include\stb\stb_image.h">
       <Filter>Include\stb</Filter>
     </ClInclude>
-    <ClInclude Include="Include\ImageWriter.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Types.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\FVector.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Ray.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Timer.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\DebugPrint.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Object.h">
@@ -48,25 +42,46 @@
     <ClInclude Include="Include\Sphere.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Camera.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\utils\DebugPrint.h">
+      <Filter>Include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\utils\ImageWriter.h">
+      <Filter>Include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\utils\Random.h">
+      <Filter>Include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\utils\Timer.h">
+      <Filter>Include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\utils\Types.h">
+      <Filter>Include\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\utils\Utils.h">
+      <Filter>Include\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DebugPrint.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ImageWriter.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Sphere.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Timer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Object.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\utils\DebugPrint.cpp">
+      <Filter>Source\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\utils\ImageWriter.cpp">
+      <Filter>Source\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\utils\Timer.cpp">
+      <Filter>Source\utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

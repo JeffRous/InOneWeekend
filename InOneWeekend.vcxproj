@@ -19,24 +19,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\DebugPrint.h" />
+    <ClInclude Include="Include\Camera.h" />
     <ClInclude Include="Include\FVector.h" />
-    <ClInclude Include="Include\ImageWriter.h" />
     <ClInclude Include="Include\Object.h" />
     <ClInclude Include="Include\Ray.h" />
     <ClInclude Include="Include\Sphere.h" />
     <ClInclude Include="Include\stb\stb_image.h" />
     <ClInclude Include="Include\stb\stb_image_write.h" />
-    <ClInclude Include="Include\Timer.h" />
-    <ClInclude Include="Include\Types.h" />
+    <ClInclude Include="Include\utils\DebugPrint.h" />
+    <ClInclude Include="Include\utils\ImageWriter.h" />
+    <ClInclude Include="Include\utils\Random.h" />
+    <ClInclude Include="Include\utils\Timer.h" />
+    <ClInclude Include="Include\utils\Types.h" />
+    <ClInclude Include="Include\utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\DebugPrint.cpp" />
-    <ClCompile Include="Source\ImageWriter.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Object.cpp" />
     <ClCompile Include="Source\Sphere.cpp" />
-    <ClCompile Include="Source\Timer.cpp" />
+    <ClCompile Include="Source\utils\DebugPrint.cpp" />
+    <ClCompile Include="Source\utils\ImageWriter.cpp" />
+    <ClCompile Include="Source\utils\Timer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

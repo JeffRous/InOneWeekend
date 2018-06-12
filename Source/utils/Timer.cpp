@@ -1,7 +1,7 @@
-#include "Timer.h"
+#include "utils/Timer.h"
 
 #include <windows.h>
-#include "Types.h"
+#include "utils/Types.h"
 
 static double Frequency;
 
