@@ -37,7 +37,7 @@ int main()
 {
 	InitTiming();
 
-	uint8 ImageBuffer[WIDTH * HEIGHT * PIXEL_COMPONENTS];
+	uint8 *ImageBuffer = new uint8[WIDTH * HEIGHT * PIXEL_COMPONENTS];
 	uint8 *ImageBufferWriter = ImageBuffer;
 
 	FVector LowerLeft(-2.0f, -1.0f, -1.0f);
@@ -76,6 +76,10 @@ int main()
 
 	ImageFileWriter::WriteImage("output.png", ImageWriterType::PNG, WIDTH, HEIGHT, PIXEL_COMPONENTS, ImageBuffer);
 	DebugPrint("Ray traversal time: %lf ms \n", Elapsed);
+
+	delete ImageBuffer;
+	ImageBuffer = nullptr;
+	ImageBufferWriter = nullptr;
 
 	return 0;
 }
