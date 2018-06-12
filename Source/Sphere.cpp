@@ -18,6 +18,7 @@ bool Sphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 			Hit.T = Temp;
 			Hit.P = R.PointAtT(Temp);
 			Hit.Normal = (Hit.P - Center) / Radius;
+			Hit.Material = Material;
 		};
 
 		if (Temp < TMax && Temp > TMin)

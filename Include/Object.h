@@ -2,11 +2,14 @@
 
 #include "Ray.h"
 
+class IMaterial;
+
 struct FHit
 {
 	float T; // Ray parameter
 	FVector P; // 3D Point on ray
 	FVector Normal;
+	IMaterial *Material;
 };
 
 class IObject

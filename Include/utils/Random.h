@@ -2,7 +2,8 @@
 
 #include <stdlib.h>
 
-double drand48()
+class Random
 {
-	return (double(rand())) / RAND_MAX;
-}
+public:
+	static double drand48() { return (double(rand())) / RAND_MAX; }
+};

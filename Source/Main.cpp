@@ -8,25 +8,14 @@
 #include "Object.h"
 #include "Sphere.h"
 #include "Camera.h"
+#include "Material.h"
 
 #define WIDTH 200
 #define HEIGHT 100
 #define SAMPLES 100
 #define PIXEL_COMPONENTS 3
 
-FVector RandomInUnitSphere()
-{
-	FVector P;
-
-	do
-	{
-		P = 2.0f*FVector(float(drand48()), float(drand48()), float(drand48())) - FVector(1, 1, 1);
-	} while (P.SquaredLength() >= 1.0f);
-
-	return P;
-}
-
-FVector Color(const Ray& R, IObject *World)
+FVector Color(const Ray& R, IObject *World, int32 Depth)
 {
 	FVector StartColor(1.0f, 1.0f, 1.0f);
 	FVector EndColor(0.5f, 0.7f, 1.0f);
@@ -34,8 +23,17 @@ FVector Color(const Ray& R, IObject *World)
 	FHit Hit;
 	if (World->Hit(R, 0.001f, FLT_MAX, Hit))
 	{
-		FVector Target = Hit.P + Hit.Normal + RandomInUnitSphere();
-		return 0.5*Color(Ray(Hit.P, Target - Hit.P), World);
+		Ray Scattered;
+		FVector Attenuation;
+
+		if (Depth < 50 && Hit.Material->Scatter(R, Hit, Attenuation, Scattered))
+		{
+			return Attenuation * Color(Scattered, World, Depth + 1);
+		}
+		else
+		{
+			return FVector(0, 0, 0);
+		}
 	}
 	else
 	{
@@ -52,11 +50,13 @@ int main()
 	uint8 *ImageBuffer = new uint8[WIDTH * HEIGHT * PIXEL_COMPONENTS];
 	uint8 *ImageBufferWriter = ImageBuffer;
 
-	IObject *List[2];
-	List[0] = new Sphere(FVector(0, 0, -1), 0.5);
-	List[1] = new Sphere(FVector(0, -100.5, -1), 100);
+	IObject *List[4];
+	List[0] = new Sphere(FVector(0.0f, 0.0f, -1.0f), 0.5f, new Lambertian(FVector(0.8f,0.3f,0.3f)));
+	List[1] = new Sphere(FVector(0.0f, -100.5f, -1.0f), 100.0f, new Lambertian(FVector(0.8f,0.8f,0.0f)));
+	List[2] = new Sphere(FVector(1.0f, 0.0f, -1.0f), 0.5f, new Metal(FVector(0.8f, 0.6f, 0.2f), 0.3f));
+	List[3] = new Sphere(FVector(-1.0f, 0.0f, -1.0f), 0.5f, new Metal(FVector(0.8f, 0.8f, 0.8f), 1.0f));
 
-	IObject *World = new ObjectList(List, 2);
+	IObject *World = new ObjectList(List, 4);
 	FCamera Camera;
 
 	Timer t;
@@ -70,13 +70,13 @@ int main()
 
 			for (int32 s = 0; s < SAMPLES; s++)
 			{
-				float u = float(i + drand48()) / float(WIDTH);
-				float v = float(j + drand48()) / float(HEIGHT);
+				float u = float(i + Random::drand48()) / float(WIDTH);
+				float v = float(j + Random::drand48()) / float(HEIGHT);
 
 				Ray R = Camera.GetRay(u, v);
 				FVector P = R.PointAtT(2.0);
 
-				PixelColor += Color(R, World);
+				PixelColor += Color(R, World, 0);
 			}
 
 			PixelColor /= float(SAMPLES);

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Include\Camera.h" />
     <ClInclude Include="Include\FVector.h" />
+    <ClInclude Include="Include\Material.h" />
     <ClInclude Include="Include\Object.h" />
     <ClInclude Include="Include\Ray.h" />
     <ClInclude Include="Include\Sphere.h" />
@@ -35,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Material.cpp" />
     <ClCompile Include="Source\Object.cpp" />
     <ClCompile Include="Source\Sphere.cpp" />
     <ClCompile Include="Source\utils\DebugPrint.cpp" />
