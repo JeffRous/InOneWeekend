@@ -35,12 +35,12 @@ IObject *RandomWorld()
 			{
 				if (ChooseMaterial < 0.8) // diffuse
 				{
-					List[i++] = new Sphere(Center, 0.2f, new Lambertian(FVector(Random::drand48(), Random::drand48()*Random::drand48(), Random::drand48()*Random::drand48())));
+					List[i++] = new Sphere(Center, 0.2f, new Lambertian(FVector(float(Random::drand48()), float(Random::drand48()*Random::drand48()), float(Random::drand48()*Random::drand48()))));
 				}
 				else if (ChooseMaterial < 0.95) // Metal
 				{
-					List[i++] = new Sphere(Center, 0.2,
-						new Metal(FVector(0.5f*(1 + Random::drand48()), 0.5f*(1 + Random::drand48()), 0.5f*(1 + Random::drand48())), 0.5f*Random::drand48()));
+					List[i++] = new Sphere(Center, 0.2f,
+						new Metal(FVector(float(0.5f*(1 + Random::drand48())), float(0.5f*(1 + Random::drand48())), float(0.5f*(1 + Random::drand48()))), float(0.5f*Random::drand48())));
 				}
 				else // glass
 				{
