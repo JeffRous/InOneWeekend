@@ -16,6 +16,47 @@
 #define SAMPLES 100
 #define PIXEL_COMPONENTS 3
 
+IObject *RandomWorld()
+{
+	int32 n = 500;
+	IObject **List = new IObject*[n+1];
+	List[0] = new Sphere(FVector(0, -1000, 0), 1000, new Lambertian(FVector(0.5, 0.5, 0.5)));
+
+	int32 i = 1;
+
+	for (int32 a = -11; a < 11; a++)
+	{
+		for (int32 b = -11; b < 11; b++)
+		{
+			float ChooseMaterial = float(Random::drand48());
+
+			FVector Center(float(a + 0.9f*Random::drand48()), 0.2f, float(b + 0.9f*Random::drand48()));
+			if ((Center - FVector(4, 0.2f, 0)).Length() > 0.9f)
+			{
+				if (ChooseMaterial < 0.8) // diffuse
+				{
+					List[i++] = new Sphere(Center, 0.2f, new Lambertian(FVector(Random::drand48(), Random::drand48()*Random::drand48(), Random::drand48()*Random::drand48())));
+				}
+				else if (ChooseMaterial < 0.95) // Metal
+				{
+					List[i++] = new Sphere(Center, 0.2,
+						new Metal(FVector(0.5f*(1 + Random::drand48()), 0.5f*(1 + Random::drand48()), 0.5f*(1 + Random::drand48())), 0.5f*Random::drand48()));
+				}
+				else // glass
+				{
+					List[i++] = new Sphere(Center, 0.2f, new Dielectric(1.5));
+				}
+			}
+		}
+	}
+
+	List[i++] = new Sphere(FVector(0, 1, 0), 1, new Dielectric(1.5f));
+	List[i++] = new Sphere(FVector(-4, 1, 0), 1, new Lambertian(FVector(0.4f, 0.2f, 0.1f)));
+	List[i++] = new Sphere(FVector(4, 1, 0), 1, new Metal(FVector(0.7f, 0.6f, 0.5f), 0.0f));
+
+	return new ObjectList(List, i);
+}
+
 FVector Color(const Ray& R, IObject *World, int32 Depth)
 {
 	FVector StartColor(1.0f, 1.0f, 1.0f);
@@ -51,22 +92,15 @@ int main()
 	uint8 *ImageBuffer = new uint8[WIDTH * HEIGHT * PIXEL_COMPONENTS];
 	uint8 *ImageBufferWriter = ImageBuffer;
 
-	IObject *List[5];
-	List[0] = new Sphere(FVector(0.0f, 0.0f, -1.0f), 0.5f, new Lambertian(FVector(0.1f,0.2f,0.5f)));
-	List[1] = new Sphere(FVector(0.0f, -100.5f, -1.0f), 100.0f, new Lambertian(FVector(0.8f,0.8f,0.0f)));
-	List[2] = new Sphere(FVector(1.0f, 0.0f, -1.0f), 0.5f, new Metal(FVector(0.8f, 0.6f, 0.2f), 0.3f));
-	List[3] = new Sphere(FVector(-1.0f, 0.0f, -1.0f), 0.5f, new Dielectric(1.5f));
-	List[4] = new Sphere(FVector(-1.0f, 0.0f, -1.0f), -0.45f, new Dielectric(1.5f));
+	IObject *World = RandomWorld();
 
-	IObject *World = new ObjectList(List, 5);
-
-	FVector Origin(3, 3, 2);
+	FVector Origin(5, 1.5f, 2);
 	FVector LookAt(0, 0, -1);
 	FVector Up(0, 1, 0);
-	float Fov = 20;
+	float Fov = 90;
 	float AspectRatio = float(WIDTH) / float(HEIGHT);
 	float DistanceToFocus = (Origin - LookAt).Length();
-	float Aperture = 2.0f;
+	float Aperture = 0.0f;
 	FCamera Camera(Origin, LookAt, Up, Fov, AspectRatio, Aperture, DistanceToFocus);
 
 	Timer t;
@@ -105,6 +139,8 @@ int main()
 
 	ImageFileWriter::WriteImage("output.png", ImageWriterType::PNG, WIDTH, HEIGHT, PIXEL_COMPONENTS, ImageBuffer);
 	DebugPrint("Ray traversal time: %lf s \n", Elapsed/1000.0);
+
+	delete World;
 
 	delete ImageBuffer;
 	ImageBuffer = nullptr;
