@@ -45,7 +45,7 @@ static bool Refract(const FVector& V, const FVector& N, float NiOverNt, FVector&
 bool Lambertian::Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const
 {
 	FVector Target = Hit.P + Hit.Normal + RandomInUnitSphere();
-	Scattered = Ray(Hit.P, Target - Hit.P);
+	Scattered = Ray(Hit.P, Target - Hit.P, InRay.GetTime());
 	Attenuation = Albedo;
 	return true;
 }
@@ -53,7 +53,7 @@ bool Lambertian::Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation
 bool Metal::Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const
 {
 	FVector Reflected = Reflect(UnitVector(InRay.GetDirection()), Hit.Normal);
-	Scattered = Ray(Hit.P, Reflected + Fuzz * RandomInUnitSphere());
+	Scattered = Ray(Hit.P, Reflected + Fuzz * RandomInUnitSphere(), InRay.GetTime());
 	Attenuation = Albedo;
 	return Dot(Scattered.GetDirection(), Hit.Normal) > 0;
 }
@@ -94,11 +94,11 @@ bool Dielectric::Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation
 
 	if (Random::drand48() < ReflectProbability)
 	{
-		Scattered = Ray(Hit.P, Reflected);
+		Scattered = Ray(Hit.P, Reflected, InRay.GetTime());
 	}
 	else
 	{
-		Scattered = Ray(Hit.P, Refracted);
+		Scattered = Ray(Hit.P, Refracted, InRay.GetTime());
 	}
 
 	return true;

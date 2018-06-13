@@ -18,15 +18,15 @@
 
 IObject *RandomWorld()
 {
-	int32 n = 500;
+	int32 n = 50000;
 	IObject **List = new IObject*[n+1];
 	List[0] = new Sphere(FVector(0, -1000, 0), 1000, new Lambertian(FVector(0.5, 0.5, 0.5)));
 
 	int32 i = 1;
 
-	for (int32 a = -11; a < 11; a++)
+	for (int32 a = -10; a < 10; a++)
 	{
-		for (int32 b = -11; b < 11; b++)
+		for (int32 b = -10; b < 10; b++)
 		{
 			float ChooseMaterial = float(Random::drand48());
 
@@ -35,7 +35,8 @@ IObject *RandomWorld()
 			{
 				if (ChooseMaterial < 0.8) // diffuse
 				{
-					List[i++] = new Sphere(Center, 0.2f, new Lambertian(FVector(float(Random::drand48()), float(Random::drand48()*Random::drand48()), float(Random::drand48()*Random::drand48()))));
+					List[i++] = new MovingSphere(Center, Center+FVector(0,float(0.5f*Random::drand48()),0), 0.0f, 1.0f, 0.2f,
+						new Lambertian(FVector(float(Random::drand48()), float(Random::drand48()*Random::drand48()), float(Random::drand48()*Random::drand48()))));
 				}
 				else if (ChooseMaterial < 0.95) // Metal
 				{
@@ -94,14 +95,16 @@ int main()
 
 	IObject *World = RandomWorld();
 
-	FVector Origin(5, 1.5f, 2);
-	FVector LookAt(0, 0, -1);
+	FVector Origin(13, 2, 3);
+	FVector LookAt(0, 0, 0);
 	FVector Up(0, 1, 0);
-	float Fov = 90;
+	float Fov = 20;
 	float AspectRatio = float(WIDTH) / float(HEIGHT);
-	float DistanceToFocus = (Origin - LookAt).Length();
+	float DistanceToFocus = 10.0f;
 	float Aperture = 0.0f;
-	FCamera Camera(Origin, LookAt, Up, Fov, AspectRatio, Aperture, DistanceToFocus);
+	float BeginTime = 0.0f;
+	float EndTime = 1.0f;
+	FCamera Camera(Origin, LookAt, Up, Fov, AspectRatio, Aperture, DistanceToFocus, BeginTime, EndTime);
 
 	Timer t;
 	t.Start();

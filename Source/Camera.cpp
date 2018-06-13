@@ -13,8 +13,19 @@ static FVector RandomInUnitDisk()
 	return P;
 }
 
-FCamera::FCamera(FVector LookFrom, FVector LookAt, FVector VUp, float VFov, float AspectRatio, float Aperture, float FocusDistance)
+FCamera::FCamera(
+	FVector LookFrom,
+	FVector LookAt,
+	FVector VUp,
+	float VFov,
+	float AspectRatio,
+	float Aperture,
+	float FocusDistance,
+	float Begin,
+	float End)
 {
+	BeginTime = Begin;
+	EndTime = End;
 	LensRadius = Aperture / 2;
 	float Theta = float(VFov*M_PI / 180);
 	float HalfHeight = tanf(Theta / 2);
@@ -32,5 +43,6 @@ Ray FCamera::GetRay(float s, float t)
 {
 	FVector RandomPointOnLens = LensRadius * RandomInUnitDisk();
 	FVector Offset = U * RandomPointOnLens.x + V * RandomPointOnLens.y;
-	return Ray(Origin + Offset, LowerLeft + s * Horizontal + t * Vertical - Origin - Offset);
+	float Time = float(BeginTime + Random::drand48()*(EndTime - BeginTime));
+	return Ray(Origin + Offset, LowerLeft + s * Horizontal + t * Vertical - Origin - Offset, Time);
 }

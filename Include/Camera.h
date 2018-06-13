@@ -5,7 +5,16 @@
 class FCamera
 {
 public:
-	FCamera(FVector LookFrom, FVector LookAt, FVector VUp, float VFov, float AspectRatio, float Aperture, float FocusDistance);
+	FCamera(
+		FVector LookFrom,
+		FVector LookAt,
+		FVector VUp,
+		float VFov,
+		float AspectRatio,
+		float Aperture,
+		float FocusDistance,
+		float BeginTime,
+		float EndTime);
 
 	Ray GetRay(float s, float t);
 
@@ -16,4 +25,5 @@ private:
 	FVector Vertical;
 	FVector U, V, W;
 	float LensRadius;
+	float BeginTime, EndTime;
 };

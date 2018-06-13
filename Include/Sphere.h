@@ -15,3 +15,21 @@ private:
 	float Radius;
 	IMaterial *Material;
 };
+
+class MovingSphere : public IObject
+{
+public:
+	MovingSphere() {}
+	MovingSphere(FVector InCenterBegin, FVector InCenterEnd, float InBeginTime, float InEndTime, float InRadius, IMaterial *InMaterial)
+		: CenterBegin(InCenterBegin), CenterEnd(InCenterEnd), BeginTime(InBeginTime), EndTime(InEndTime),
+		Radius(InRadius), Material(InMaterial) {};
+
+	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
+	FVector Center(float Time) const;
+
+private:
+	FVector CenterBegin, CenterEnd;
+	float BeginTime, EndTime;
+	float Radius;
+	IMaterial *Material;
+};
