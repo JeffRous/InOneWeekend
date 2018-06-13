@@ -25,7 +25,7 @@ public:
 	inline float SquaredLength() const { return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; }
 	inline void Normalize();
 
-	union
+	__declspec (align(16)) union
 	{
 		struct
 		{
