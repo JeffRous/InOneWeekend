@@ -59,7 +59,15 @@ int main()
 	List[4] = new Sphere(FVector(-1.0f, 0.0f, -1.0f), -0.45f, new Dielectric(1.5f));
 
 	IObject *World = new ObjectList(List, 5);
-	FCamera Camera(FVector(-2,2,1), FVector(0,0,-1), FVector(0,1,0), 30, float(WIDTH)/float(HEIGHT));
+
+	FVector Origin(3, 3, 2);
+	FVector LookAt(0, 0, -1);
+	FVector Up(0, 1, 0);
+	float Fov = 20;
+	float AspectRatio = float(WIDTH) / float(HEIGHT);
+	float DistanceToFocus = (Origin - LookAt).Length();
+	float Aperture = 2.0f;
+	FCamera Camera(Origin, LookAt, Up, Fov, AspectRatio, Aperture, DistanceToFocus);
 
 	Timer t;
 	t.Start();

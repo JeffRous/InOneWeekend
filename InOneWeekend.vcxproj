@@ -35,6 +35,7 @@
     <ClInclude Include="Include\utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Material.cpp" />
     <ClCompile Include="Source\Object.cpp" />
