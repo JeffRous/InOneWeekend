@@ -2,6 +2,10 @@
 
 #include <float.h>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+#undef _USE_MATH_DEFINES
+
 typedef unsigned char		uint8;
 typedef signed char			int8;
 static_assert(sizeof(char) == 1, "Char not 1 byte");
