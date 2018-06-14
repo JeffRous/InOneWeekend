@@ -7,7 +7,7 @@ bool ObjectList::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 
 	float Closest = TMax;
 
-	for (int32 i = 0; i < ListNumber; i++)
+	for (int32 i = 0; i < ListSize; i++)
 	{
 		if (List[i]->Hit(R, TMin, Closest, Temp))
 		{
@@ -22,5 +22,34 @@ bool ObjectList::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 
 bool ObjectList::BoundingBox(float T0, float T1, AABB& Box) const
 {
-	return false;
+	if (ListSize < 1)
+	{
+		return false;
+	}
+
+	AABB TempBox;
+
+	bool FirstTrue = List[0]->BoundingBox(T0, T1, TempBox);
+
+	if (!FirstTrue)
+	{
+		return false;
+	}
+	else
+	{
+		Box = TempBox;
+	}
+
+	for (int32 i = 1; i < ListSize; i++)
+	{
+		if (List[0]->BoundingBox(T0, T1, TempBox))
+		{
+			Box = SurroundingBox(Box, TempBox);
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return true;
 }

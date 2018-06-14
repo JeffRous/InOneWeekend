@@ -24,12 +24,12 @@ class ObjectList : public IObject
 {
 public:
 	ObjectList() {}
-	ObjectList(IObject **InList, int32 InListNumber) { List = InList; ListNumber = InListNumber; }
+	ObjectList(IObject **InList, int32 InListSize) { List = InList; ListSize = InListSize; }
 
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
 
 private:
 	IObject **List;
-	int32 ListNumber;
+	int32 ListSize;
 };

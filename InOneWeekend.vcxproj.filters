@@ -69,6 +69,9 @@
     <ClInclude Include="Include\AABB.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\BVH.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp">
@@ -96,6 +99,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Include\AABB.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BVH.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -10,6 +10,7 @@
 #include "Sphere.h"
 #include "Camera.h"
 #include "Material.h"
+#include "BVH.h"
 
 #define WIDTH 200
 #define HEIGHT 100
@@ -55,7 +56,8 @@ IObject *RandomWorld()
 	List[i++] = new Sphere(FVector(-4, 1, 0), 1, new Lambertian(FVector(0.4f, 0.2f, 0.1f)));
 	List[i++] = new Sphere(FVector(4, 1, 0), 1, new Metal(FVector(0.7f, 0.6f, 0.5f), 0.0f));
 
-	return new ObjectList(List, i);
+	//return new ObjectList(List, i);
+	return new BVHNode(List, i, 0, 1);
 }
 
 FVector Color(const Ray& R, IObject *World, int32 Depth)
