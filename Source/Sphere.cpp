@@ -39,6 +39,12 @@ bool Sphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 	return false;
 }
 
+bool Sphere::BoundingBox(float T0, float T1, AABB& Box) const
+{
+	Box = AABB(Center - FVector(Radius, Radius, Radius), Center + FVector(Radius, Radius, Radius));
+	return true;
+}
+
 bool MovingSphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 {
 	FVector Oc = R.GetOrigin() - Center(R.GetTime());
@@ -76,6 +82,17 @@ bool MovingSphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 	}
 
 	return false;
+}
+
+bool MovingSphere::BoundingBox(float T0, float T1, AABB& Box) const
+{
+	FVector CenterT0 = Center(T0);
+	FVector CenterT1 = Center(T1);
+
+	AABB Box0 = AABB(CenterT0 - FVector(Radius, Radius, Radius), CenterT0 + FVector(Radius, Radius, Radius));
+	AABB Box1 = AABB(CenterT1 - FVector(Radius, Radius, Radius), CenterT1 + FVector(Radius, Radius, Radius));
+	Box = SurroundingBox(Box0, Box1);
+	return true;
 }
 
 FVector MovingSphere::Center(float Time) const

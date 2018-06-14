@@ -19,3 +19,8 @@ bool ObjectList::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 
 	return bHit;
 }
+
+bool ObjectList::BoundingBox(float T0, float T1, AABB& Box) const
+{
+	return false;
+}
