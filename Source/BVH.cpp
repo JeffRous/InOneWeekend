@@ -7,11 +7,11 @@ BVHNode::BVHNode(IObject** List, int32 ListSize, float BeginTime, float EndTime)
 {
 	int32 Axis = int32(3 * Random::drand48());
 
-	auto BoxCompare = [&](const IObject *AHit, const IObject *BHit) -> bool
+	auto BoxCompare = [Axis](const IObject *AHit, const IObject *BHit) -> bool
 	{
-		AABB BoxLeft, BoxRight;
+		AABB BoxL, BoxR;
 
-		if (!AHit->BoundingBox(0, 0, BoxLeft) || !BHit->BoundingBox(0, 0, BoxRight))
+		if (!AHit->BoundingBox(0, 0, BoxL) || !BHit->BoundingBox(0, 0, BoxR))
 		{
 			DebugPrint("No Bounding Box in BVHNode Constructor");
 		}
@@ -22,17 +22,17 @@ BVHNode::BVHNode(IObject** List, int32 ListSize, float BeginTime, float EndTime)
 		{
 		case 0:
 		{
-			ReturnValue = (BoxLeft.Min.x - BoxRight.Min.x) < 0.0f ? true : false;
+			ReturnValue = (BoxL.Min().x - BoxR.Min().x) < 0.0f ? true : false;
 			break;
 		}
 		case 1:
 		{
-			ReturnValue = (BoxLeft.Min.y - BoxRight.Min.y) < 0.0f ? true : false;
+			ReturnValue = (BoxL.Min().y - BoxR.Min().y) < 0.0f ? true : false;
 			break;
 		}
 		default:
 		{
-			ReturnValue = (BoxLeft.Min.z - BoxRight.Min.z) < 0.0f ? true : false;
+			ReturnValue = (BoxL.Min().z - BoxR.Min().z) < 0.0f ? true : false;
 			break;
 		}
 		}
@@ -111,4 +111,12 @@ bool BVHNode::BoundingBox(float T0, float T1, AABB& B) const
 {
 	B = Box;
 	return true;
+}
+
+void BVHNode::Debug() const
+{
+	Left->Debug();
+	Right->Debug();
+	DebugPrint("BVHNode %x Left: %x, Right %x AABB: Min: %.2f,%.2f,%.2f Max: %.2f,%.2f,%.2f \n", this, Left, Right,
+		Box.Min().x, Box.Min().y, Box.Min().z, Box.Max().x, Box.Max().y, Box.Max().z);
 }

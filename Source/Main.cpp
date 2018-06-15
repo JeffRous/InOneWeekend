@@ -34,19 +34,19 @@ IObject *RandomWorld()
 			FVector Center(float(a + 0.9f*Random::drand48()), 0.2f, float(b + 0.9f*Random::drand48()));
 			if ((Center - FVector(4, 0.2f, 0)).Length() > 0.9f)
 			{
-				if (ChooseMaterial < 0.8) // diffuse
+				if (ChooseMaterial < 0.8f) // diffuse
 				{
 					List[i++] = new MovingSphere(Center, Center+FVector(0,float(0.5f*Random::drand48()),0), 0.0f, 1.0f, 0.2f,
 						new Lambertian(FVector(float(Random::drand48()), float(Random::drand48()*Random::drand48()), float(Random::drand48()*Random::drand48()))));
 				}
-				else if (ChooseMaterial < 0.95) // Metal
+				else if (ChooseMaterial < 0.95f) // Metal
 				{
 					List[i++] = new Sphere(Center, 0.2f,
 						new Metal(FVector(float(0.5f*(1 + Random::drand48())), float(0.5f*(1 + Random::drand48())), float(0.5f*(1 + Random::drand48()))), float(0.5f*Random::drand48())));
 				}
 				else // glass
 				{
-					List[i++] = new Sphere(Center, 0.2f, new Dielectric(1.5));
+					List[i++] = new Sphere(Center, 0.2f, new Dielectric(1.5f));
 				}
 			}
 		}
@@ -96,6 +96,7 @@ int main()
 	uint8 *ImageBufferWriter = ImageBuffer;
 
 	IObject *World = RandomWorld();
+	World->Debug();
 
 	FVector Origin(13, 2, 3);
 	FVector LookAt(0, 0, 0);

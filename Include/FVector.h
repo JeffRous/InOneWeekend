@@ -7,6 +7,7 @@ class FVector
 {
 public:
 	FVector() {}
+	FVector(const FVector &v) { e[0] = v.e[0]; e[1] = v.e[1]; e[2] = v.e[2]; }
 	FVector(float e0, float e1, float e2) { e[0] = e0; e[1] = e1; e[2] = e2; }
 
 	inline const FVector& operator+() const { return *this; }

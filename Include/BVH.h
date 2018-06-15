@@ -11,6 +11,8 @@ public:
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
 
+	virtual void Debug() const;
+
 private:
 	IObject* Left;
 	IObject* Right;

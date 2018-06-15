@@ -11,6 +11,8 @@ public:
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
 
+	virtual void Debug() const;
+
 private:
 	FVector Center;
 	float Radius;
@@ -21,18 +23,20 @@ class MovingSphere : public IObject
 {
 public:
 	MovingSphere() {}
-	MovingSphere(FVector InCenterBegin, FVector InCenterEnd, float InBeginTime, float InEndTime, float InRadius, IMaterial *InMaterial)
-		: CenterBegin(InCenterBegin), CenterEnd(InCenterEnd), BeginTime(InBeginTime), EndTime(InEndTime),
+	MovingSphere(FVector InCenter0, FVector InCenter1, float InTime0, float InTime1, float InRadius, IMaterial *InMaterial)
+		: Center0(InCenter0), Center1(InCenter1), Time0(InTime0), Time1(InTime1),
 		Radius(InRadius), Material(InMaterial) {};
 
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
 
-	FVector Center(float Time) const;
+	virtual void Debug() const;
+
+	FVector GetCenterAt(float Time) const;
 
 private:
-	FVector CenterBegin, CenterEnd;
-	float BeginTime, EndTime;
+	FVector Center0, Center1;
+	float Time0, Time1;
 	float Radius;
 	IMaterial *Material;
 };
