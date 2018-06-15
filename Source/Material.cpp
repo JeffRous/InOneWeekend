@@ -46,7 +46,7 @@ bool Lambertian::Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation
 {
 	FVector Target = Hit.P + Hit.Normal + RandomInUnitSphere();
 	Scattered = Ray(Hit.P, Target - Hit.P, InRay.GetTime());
-	Attenuation = Albedo;
+	Attenuation = Albedo->Value(0, 0, Hit.P);
 	return true;
 }
 

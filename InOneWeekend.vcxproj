@@ -29,6 +29,7 @@
     <ClInclude Include="Include\Sphere.h" />
     <ClInclude Include="Include\stb\stb_image.h" />
     <ClInclude Include="Include\stb\stb_image_write.h" />
+    <ClInclude Include="Include\Texture.h" />
     <ClInclude Include="Include\utils\DebugPrint.h" />
     <ClInclude Include="Include\utils\ImageWriter.h" />
     <ClInclude Include="Include\utils\Random.h" />
@@ -44,6 +45,7 @@
     <ClCompile Include="Source\Material.cpp" />
     <ClCompile Include="Source\Object.cpp" />
     <ClCompile Include="Source\Sphere.cpp" />
+    <ClCompile Include="Source\Texture.cpp" />
     <ClCompile Include="Source\utils\DebugPrint.cpp" />
     <ClCompile Include="Source\utils\ImageWriter.cpp" />
     <ClCompile Include="Source\utils\Timer.cpp" />

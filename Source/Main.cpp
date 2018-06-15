@@ -17,11 +17,25 @@
 #define SAMPLES 100
 #define PIXEL_COMPONENTS 3
 
+IObject *TwoSpheres()
+{
+	ITexture *Checker = new CheckerTexture(new ConstantTexture(FVector(0.2f, 0.3f, 0.1f)), new ConstantTexture(FVector(0.9f, 0.9f, 0.9f)));
+
+	int32 n = 2;
+	IObject **List = new IObject*[n + 1];
+
+	List[0] = new Sphere(FVector(0, -10, 0), 10, new Lambertian(Checker));
+	List[1] = new Sphere(FVector(0, 10, 0), 10, new Lambertian(Checker));
+
+	return new ObjectList(List, 2);
+}
+
 IObject *RandomWorld()
 {
 	int32 n = 50000;
 	IObject **List = new IObject*[n+1];
-	List[0] = new Sphere(FVector(0, -1000, 0), 1000, new Lambertian(FVector(0.5, 0.5, 0.5)));
+	ITexture *Checker = new CheckerTexture(new ConstantTexture(FVector(0.2f, 0.3f, 0.1f)), new ConstantTexture(FVector(0.9f, 0.9f, 0.9f)));
+	List[0] = new Sphere(FVector(0, -1000, 0), 1000, new Lambertian(Checker));
 
 	int32 i = 1;
 
@@ -37,7 +51,7 @@ IObject *RandomWorld()
 				if (ChooseMaterial < 0.8f) // diffuse
 				{
 					List[i++] = new MovingSphere(Center, Center+FVector(0,float(0.5f*Random::drand48()),0), 0.0f, 1.0f, 0.2f,
-						new Lambertian(FVector(float(Random::drand48()), float(Random::drand48()*Random::drand48()), float(Random::drand48()*Random::drand48()))));
+						new Lambertian(new ConstantTexture(FVector(float(Random::drand48()), float(Random::drand48()*Random::drand48()), float(Random::drand48()*Random::drand48())))));
 				}
 				else if (ChooseMaterial < 0.95f) // Metal
 				{
@@ -53,7 +67,7 @@ IObject *RandomWorld()
 	}
 
 	List[i++] = new Sphere(FVector(0, 1, 0), 1, new Dielectric(1.5f));
-	List[i++] = new Sphere(FVector(-4, 1, 0), 1, new Lambertian(FVector(0.4f, 0.2f, 0.1f)));
+	List[i++] = new Sphere(FVector(-4, 1, 0), 1, new Lambertian(new ConstantTexture(FVector(0.4f, 0.2f, 0.1f))));
 	List[i++] = new Sphere(FVector(4, 1, 0), 1, new Metal(FVector(0.7f, 0.6f, 0.5f), 0.0f));
 
 	//return new ObjectList(List, i);
