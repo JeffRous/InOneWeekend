@@ -30,6 +30,10 @@
 
 #include "pcg_basic.h"
 
+#pragma warning(push)
+#pragma warning(disable:4146)
+#pragma warning(disable:4244)
+
 // state for global RNGs
 
 static pcg32_random_t pcg32_global = PCG32_INITIALIZER;
@@ -114,3 +118,4 @@ uint32_t pcg32_boundedrand(uint32_t bound)
     return pcg32_boundedrand_r(&pcg32_global, bound);
 }
 
+#pragma warning(pop)
