@@ -1,6 +1,8 @@
 #pragma once
 
-#include <cstdlib>
+#include "pcg-c-basic/pcg_basic.h"
+
+#define RANDOM_BOUND 0x7FFF
 
 class Random
 {
@@ -10,13 +12,20 @@ public:
 	{
 		if (!isSeeded())
 		{
-			std::srand(1);
+			pcg32_srandom_r(GetGenerator(), 42u, 54u);
 			isSeeded() = true;
 		}
-		return (double(std::rand())) / RAND_MAX;
+		return (double(pcg32_boundedrand_r(GetGenerator(), RANDOM_BOUND))) / RANDOM_BOUND;
 	}
 
 private:
+
+	static pcg32_random_t* GetGenerator()
+	{
+		static pcg32_random_t Generator = { 0 };
+		return &Generator;
+	}
+
 	static bool& isSeeded()
 	{
 		static bool bSeeded = false;

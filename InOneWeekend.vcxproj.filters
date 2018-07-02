@@ -22,6 +22,9 @@
     <Filter Include="Source\utils">
       <UniqueIdentifier>{78affd95-6f92-4871-afb7-170077886609}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include\pcg_basic">
+      <UniqueIdentifier>{085df67a-c193-43ee-bc02-71ba49092c13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\stb\stb_image_write.h">
@@ -75,6 +78,9 @@
     <ClInclude Include="Include\Texture.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\pcg-c-basic\pcg_basic.h">
+      <Filter>Include\pcg_basic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp">
@@ -109,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="Source\Texture.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Include\pcg-c-basic\pcg_basic.c">
+      <Filter>Include\pcg_basic</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
