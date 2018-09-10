@@ -9,9 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Include\stb">
-      <UniqueIdentifier>{50b559b2-091d-4d48-9bbd-8b0f43d7b46d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -22,17 +19,17 @@
     <Filter Include="Source\utils">
       <UniqueIdentifier>{78affd95-6f92-4871-afb7-170077886609}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\pcg_basic">
-      <UniqueIdentifier>{085df67a-c193-43ee-bc02-71ba49092c13}</UniqueIdentifier>
+    <Filter Include="ThirdParty">
+      <UniqueIdentifier>{e1d8dffb-1810-4f1f-b31d-cd84f8abb938}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\stb">
+      <UniqueIdentifier>{788cb2f5-7162-4804-b8bb-0bd7ff5e925d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\pcg-c-basic">
+      <UniqueIdentifier>{124889ae-c59a-4734-b3ac-45fcaa2ad6b4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\stb\stb_image_write.h">
-      <Filter>Include\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\stb\stb_image.h">
-      <Filter>Include\stb</Filter>
-    </ClInclude>
     <ClInclude Include="Include\FVector.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -78,8 +75,20 @@
     <ClInclude Include="Include\Texture.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\pcg-c-basic\pcg_basic.h">
-      <Filter>Include\pcg_basic</Filter>
+    <ClInclude Include="ThirdParty\stb\stb_image.h">
+      <Filter>ThirdParty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\stb\stb_image_write.h">
+      <Filter>ThirdParty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\pcg-c-basic\pcg_basic.h">
+      <Filter>ThirdParty\pcg-c-basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\stb\stb_image.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\stb\stb_image_write.h">
+      <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -107,7 +116,7 @@
     <ClCompile Include="Source\Camera.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Include\AABB.cpp">
+    <ClCompile Include="Source\AABB.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\BVH.cpp">
@@ -116,8 +125,8 @@
     <ClCompile Include="Source\Texture.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Include\pcg-c-basic\pcg_basic.c">
-      <Filter>Include\pcg_basic</Filter>
+    <ClCompile Include="ThirdParty\pcg-c-basic\pcg_basic.c">
+      <Filter>ThirdParty\pcg-c-basic</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

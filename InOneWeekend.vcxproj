@@ -25,7 +25,6 @@
     <ClInclude Include="Include\FVector.h" />
     <ClInclude Include="Include\Material.h" />
     <ClInclude Include="Include\Object.h" />
-    <ClInclude Include="Include\pcg-c-basic\pcg_basic.h" />
     <ClInclude Include="Include\Ray.h" />
     <ClInclude Include="Include\Sphere.h" />
     <ClInclude Include="Include\stb\stb_image.h" />
@@ -37,10 +36,12 @@
     <ClInclude Include="Include\utils\Timer.h" />
     <ClInclude Include="Include\utils\Types.h" />
     <ClInclude Include="Include\utils\Utils.h" />
+    <ClInclude Include="ThirdParty\pcg-c-basic\pcg_basic.h" />
+    <ClInclude Include="ThirdParty\stb\stb_image.h" />
+    <ClInclude Include="ThirdParty\stb\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Include\AABB.cpp" />
-    <ClCompile Include="Include\pcg-c-basic\pcg_basic.c" />
+    <ClCompile Include="Source\AABB.cpp" />
     <ClCompile Include="Source\BVH.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Main.cpp" />
@@ -51,6 +52,7 @@
     <ClCompile Include="Source\utils\DebugPrint.cpp" />
     <ClCompile Include="Source\utils\ImageWriter.cpp" />
     <ClCompile Include="Source\utils\Timer.cpp" />
+    <ClCompile Include="ThirdParty\pcg-c-basic\pcg_basic.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -110,7 +112,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Include; ThirdParty</AdditionalIncludeDirectories>
       <FloatingPointExceptions>true</FloatingPointExceptions>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
@@ -121,7 +123,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Include; ThirdParty</AdditionalIncludeDirectories>
       <FloatingPointExceptions>true</FloatingPointExceptions>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -134,7 +136,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Include; ThirdParty</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
@@ -156,7 +158,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Include; ThirdParty</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
