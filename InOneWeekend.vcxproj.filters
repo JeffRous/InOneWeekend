@@ -25,9 +25,6 @@
     <Filter Include="ThirdParty\stb">
       <UniqueIdentifier>{788cb2f5-7162-4804-b8bb-0bd7ff5e925d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ThirdParty\pcg-c-basic">
-      <UniqueIdentifier>{124889ae-c59a-4734-b3ac-45fcaa2ad6b4}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\FVector.h">
@@ -81,9 +78,6 @@
     <ClInclude Include="ThirdParty\stb\stb_image_write.h">
       <Filter>ThirdParty\stb</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\pcg-c-basic\pcg_basic.h">
-      <Filter>ThirdParty\pcg-c-basic</Filter>
-    </ClInclude>
     <ClInclude Include="Include\stb\stb_image.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -124,9 +118,6 @@
     </ClCompile>
     <ClCompile Include="Source\Texture.cpp">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\pcg-c-basic\pcg_basic.c">
-      <Filter>ThirdParty\pcg-c-basic</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

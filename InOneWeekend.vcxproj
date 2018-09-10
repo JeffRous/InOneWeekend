@@ -36,7 +36,6 @@
     <ClInclude Include="Include\utils\Timer.h" />
     <ClInclude Include="Include\utils\Types.h" />
     <ClInclude Include="Include\utils\Utils.h" />
-    <ClInclude Include="ThirdParty\pcg-c-basic\pcg_basic.h" />
     <ClInclude Include="ThirdParty\stb\stb_image.h" />
     <ClInclude Include="ThirdParty\stb\stb_image_write.h" />
   </ItemGroup>
@@ -52,7 +51,6 @@
     <ClCompile Include="Source\utils\DebugPrint.cpp" />
     <ClCompile Include="Source\utils\ImageWriter.cpp" />
     <ClCompile Include="Source\utils\Timer.cpp" />
-    <ClCompile Include="ThirdParty\pcg-c-basic\pcg_basic.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
