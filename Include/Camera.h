@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Ray.h"
+#include "Raytracing_ispc.h"
 
 class FCamera
 {
@@ -17,6 +18,7 @@ public:
 		float EndTime);
 
 	Ray GetRay(float s, float t);
+	ispc::FCamera GetISPCCamera();
 
 private:
 	FVector Origin;

@@ -46,3 +46,21 @@ Ray FCamera::GetRay(float s, float t)
 	float Time = float(BeginTime + Random::drand48()*(EndTime - BeginTime));
 	return Ray(Origin + Offset, LowerLeft + s * Horizontal + t * Vertical - Origin - Offset, Time);
 }
+
+ispc::FCamera FCamera::GetISPCCamera()
+{
+	ispc::FCamera Camera;
+
+	Camera.Origin = Origin.ToISPCFVector();
+	Camera.LowerLeft = LowerLeft.ToISPCFVector();
+	Camera.Horizontal = Horizontal.ToISPCFVector();
+	Camera.Vertical = Vertical.ToISPCFVector();
+	Camera.U = U.ToISPCFVector();
+	Camera.V = V.ToISPCFVector();
+	Camera.W = W.ToISPCFVector();
+	Camera.LensRadius = LensRadius;
+	Camera.BeginTime = BeginTime;
+	Camera.EndTime = EndTime;
+
+	return Camera;
+}

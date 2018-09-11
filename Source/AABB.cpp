@@ -16,11 +16,14 @@ AABB SurroundingBox(AABB Box0, AABB Box1)
 
 bool AABB::Hit(const Ray& R, float TMin, float TMax) const
 {
+	FVector Direction = R.GetDirection();
+	FVector Origin = R.GetOrigin();
+
 	for (int32 i = 0; i < 3; i++)
 	{
-		float InvD = 1.0f / R.GetDirection()[i];
-		float T0 = (Min()[i] - R.GetOrigin()[i]) * InvD;
-		float T1 = (Max()[i] - R.GetOrigin()[i]) * InvD;
+		float InvD = 1.0f / Direction[i];
+		float T0 = (min[i] - Origin[i]) * InvD;
+		float T1 = (max[i] - Origin[i]) * InvD;
 
 		if (InvD < 0.0f)
 		{

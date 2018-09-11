@@ -11,11 +11,14 @@
 #include "Camera.h"
 #include "Material.h"
 #include "BVH.h"
+#include "Raytracing_ispc.h"
 
 #define WIDTH 200
 #define HEIGHT 100
 #define SAMPLES 100
 #define PIXEL_COMPONENTS 3
+
+static const bool bUseISPC = true;
 
 IObject *TwoSpheres()
 {
@@ -126,34 +129,72 @@ int main()
 	Timer t;
 	t.Start();
 
-	concurrency::parallel_for(int32(0), HEIGHT, [&](int32 j)
-	//for (int32 j = 0; j < HEIGHT; j++)
+	if (bUseISPC)
 	{
-		for (int32 i = 0; i < WIDTH; i++)
+		concurrency::parallel_for(int32(0), HEIGHT, [&](int32 j)
+		//for (int32 j = 0; j < HEIGHT; j++)
 		{
-			FVector PixelColor(0, 0, 0);
-
-			for (int32 s = 0; s < SAMPLES; s++)
+			for (int32 i = 0; i < WIDTH; i++)
 			{
-				float u = float(i + Random::drand48()) / float(WIDTH);
-				float v = float(j + Random::drand48()) / float(HEIGHT);
+				FVector PixelColor(0, 0, 0);
 
-				Ray R = Camera.GetRay(u, v);
-				FVector P = R.PointAtT(2.0);
+				ispc::Ray ISPCRays[SAMPLES];
+				ispc::FCamera ISPCCamera = Camera.GetISPCCamera();
 
-				PixelColor += Color(R, World, 0);
+				ispc::GetRays(ISPCRays, ISPCCamera, SAMPLES, i, WIDTH, j, HEIGHT);
+
+				for (int32 s = 0; s < SAMPLES; s++)
+				{
+					FVector Origin(FVector(ISPCRays[s].Origin.x, ISPCRays[s].Origin.y, ISPCRays[s].Origin.z));
+					FVector Direction(FVector(ISPCRays[s].Direction.x, ISPCRays[s].Direction.y, ISPCRays[s].Direction.z));
+
+					Ray R(Origin, Direction, ISPCRays[s].Time);
+
+					PixelColor += Color(R, World, 0);
+				}
+
+				PixelColor /= float(SAMPLES);
+				PixelColor = FVector(sqrtf(PixelColor.r), sqrtf(PixelColor.g), sqrtf(PixelColor.b));
+
+				uint32 PixelToWrite = ((HEIGHT - 1 - j)*WIDTH*PIXEL_COMPONENTS) + (i*PIXEL_COMPONENTS);
+
+				ImageBuffer[PixelToWrite + 0] = uint8(255.99*PixelColor.r);
+				ImageBuffer[PixelToWrite + 1] = uint8(255.99*PixelColor.g);
+				ImageBuffer[PixelToWrite + 2] = uint8(255.99*PixelColor.b);
 			}
+		});
+	}
+	else
+	{
+		concurrency::parallel_for(int32(0), HEIGHT, [&](int32 j)
+		//for (int32 j = 0; j < HEIGHT; j++)
+		{
+			for (int32 i = 0; i < WIDTH; i++)
+			{
+				FVector PixelColor(0, 0, 0);
 
-			PixelColor /= float(SAMPLES);
-			PixelColor = FVector(sqrtf(PixelColor.r), sqrtf(PixelColor.g), sqrtf(PixelColor.b));
+				for (int32 s = 0; s < SAMPLES; s++)
+				{
+					float u = float(i + Random::drand48()) / float(WIDTH);
+					float v = float(j + Random::drand48()) / float(HEIGHT);
 
-			uint32 PixelToWrite = ((HEIGHT-1-j)*WIDTH*PIXEL_COMPONENTS) + (i*PIXEL_COMPONENTS);
+					Ray R = Camera.GetRay(u, v);
+					FVector P = R.PointAtT(2.0);
 
-			ImageBuffer[PixelToWrite + 0] = uint8(255.99*PixelColor.r);
-			ImageBuffer[PixelToWrite + 1] = uint8(255.99*PixelColor.g);
-			ImageBuffer[PixelToWrite + 2] = uint8(255.99*PixelColor.b);
-		}
-	});
+					PixelColor += Color(R, World, 0);
+				}
+
+				PixelColor /= float(SAMPLES);
+				PixelColor = FVector(sqrtf(PixelColor.r), sqrtf(PixelColor.g), sqrtf(PixelColor.b));
+
+				uint32 PixelToWrite = ((HEIGHT - 1 - j)*WIDTH*PIXEL_COMPONENTS) + (i*PIXEL_COMPONENTS);
+
+				ImageBuffer[PixelToWrite + 0] = uint8(255.99*PixelColor.r);
+				ImageBuffer[PixelToWrite + 1] = uint8(255.99*PixelColor.g);
+				ImageBuffer[PixelToWrite + 2] = uint8(255.99*PixelColor.b);
+			}
+		});
+	}
 
 	double Elapsed = t.Stop();
 

@@ -120,4 +120,9 @@
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Source\RayTracing.ispc">
+      <Filter>Source</Filter>
+    </CustomBuild>
+  </ItemGroup>
 </Project>

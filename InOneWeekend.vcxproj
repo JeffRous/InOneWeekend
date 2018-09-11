@@ -52,6 +52,19 @@
     <ClCompile Include="Source\utils\ImageWriter.cpp" />
     <ClCompile Include="Source\utils\Timer.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Source\RayTracing.ispc">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)ThirdParty\ispc\ispc -O2 "%(FullPath)" -o "$(IntDir)%(Filename)_ispc.obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=sse4,avx2 --opt=fast-math</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)ThirdParty\ispc\ispc -O2 "%(FullPath)" -o "$(IntDir)%(Filename)_ispc.obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=sse4,avx2 --opt=fast-math</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)ThirdParty\ispc\ispc -O2 "%(FullPath)" -o "$(IntDir)%(Filename)_ispc.obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=sse4,avx2 --opt=fast-math</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)ThirdParty\ispc\ispc -O2 "%(FullPath)" -o "$(IntDir)%(Filename)_ispc.obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=sse4,avx2 --opt=fast-math</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)_ispc.obj;$(IntDir)%(Filename)_ispc_sse4.obj;$(IntDir)%(Filename)_ispc_avx2.obj</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)_ispc.obj;$(IntDir)%(Filename)_ispc_sse4.obj;$(IntDir)%(Filename)_ispc_avx2.obj</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)_ispc.obj;$(IntDir)%(Filename)_ispc_sse4.obj;$(IntDir)%(Filename)_ispc_avx2.obj</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)_ispc.obj;$(IntDir)%(Filename)_ispc_sse4.obj;$(IntDir)%(Filename)_ispc_avx2.obj</Outputs>
+    </CustomBuild>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{C328D1BA-993C-4AAB-9D57-328A749B1C6D}</ProjectGuid>
