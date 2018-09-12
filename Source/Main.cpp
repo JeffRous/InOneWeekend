@@ -145,12 +145,7 @@ int main()
 
 				for (int32 s = 0; s < SAMPLES; s++)
 				{
-					FVector Origin(FVector(ISPCRays[s].Origin.x, ISPCRays[s].Origin.y, ISPCRays[s].Origin.z));
-					FVector Direction(FVector(ISPCRays[s].Direction.x, ISPCRays[s].Direction.y, ISPCRays[s].Direction.z));
-
-					Ray R(Origin, Direction, ISPCRays[s].Time);
-
-					PixelColor += Color(R, World, 0);
+					PixelColor += Color(Ray(ISPCRays[s].Origin, ISPCRays[s].Direction, ISPCRays[s].Time), World, 0);
 				}
 
 				PixelColor /= float(SAMPLES);

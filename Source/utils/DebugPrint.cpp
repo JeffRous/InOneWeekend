@@ -8,6 +8,7 @@ void DebugPrint(const char *format, ...)
 	va_list args;
 	va_start(args, format);
 	vsprintf_s(buffer, format, args);
+	printf(buffer);
 	OutputDebugString(buffer);
 	va_end(args);
 }

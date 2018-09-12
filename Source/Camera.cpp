@@ -51,13 +51,13 @@ ispc::FCamera FCamera::GetISPCCamera()
 {
 	ispc::FCamera Camera;
 
-	Camera.Origin = Origin.ToISPCFVector();
-	Camera.LowerLeft = LowerLeft.ToISPCFVector();
-	Camera.Horizontal = Horizontal.ToISPCFVector();
-	Camera.Vertical = Vertical.ToISPCFVector();
-	Camera.U = U.ToISPCFVector();
-	Camera.V = V.ToISPCFVector();
-	Camera.W = W.ToISPCFVector();
+	Camera.Origin = Origin;
+	Camera.LowerLeft = LowerLeft;
+	Camera.Horizontal = Horizontal;
+	Camera.Vertical = Vertical;
+	Camera.U = U;
+	Camera.V = V;
+	Camera.W = W;
 	Camera.LensRadius = LensRadius;
 	Camera.BeginTime = BeginTime;
 	Camera.EndTime = EndTime;

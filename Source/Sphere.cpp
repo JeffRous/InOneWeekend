@@ -53,9 +53,12 @@ void Sphere::Debug() const
 
 bool MovingSphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 {
-	FVector Oc = R.GetOrigin() - GetCenterAt(R.GetTime());
-	float a = Dot(R.GetDirection(), R.GetDirection());
-	float b = Dot(Oc, R.GetDirection());
+	FVector GetCenterAtTime = GetCenterAt(R.GetTime());
+	FVector RayDirection = R.GetDirection();
+	FVector Oc = R.GetOrigin() - GetCenterAtTime;
+
+	float a = Dot(RayDirection, RayDirection);
+	float b = Dot(Oc, RayDirection);
 	float c = Dot(Oc, Oc) - Radius * Radius;
 	float Discriminant = b * b - a * c;
 
@@ -68,7 +71,7 @@ bool MovingSphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 		{
 			Hit.T = Temp;
 			Hit.P = R.PointAtT(Temp);
-			Hit.Normal = (Hit.P - GetCenterAt(R.GetTime())) / Radius;
+			Hit.Normal = (Hit.P - GetCenterAtTime) / Radius;
 			Hit.Material = Material;
 		};
 

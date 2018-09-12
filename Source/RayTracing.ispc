@@ -1,4 +1,5 @@
 //typedef float<3> float3;
+
 struct float3
 {
 	float x, y, z;
@@ -114,75 +115,4 @@ export void GetRays(uniform Ray Rays[], uniform FCamera &Camera, uniform int Sam
 		Rays[s].Direction = sub(sub(add(add(mul(Camera.Horizontal, u), Camera.LowerLeft), mul(Camera.Vertical, v)), Camera.Origin), Offset);
 		Rays[s].Time = Camera.BeginTime + frandom(&rngstate)*(Camera.EndTime - Camera.BeginTime);
 	}
-}
-
-export uniform bool AABBHit(const uniform float3& Direction, const uniform float3& Origin, const uniform float3& Min, const uniform float3& Max, uniform float TMin, uniform float TMax)
-{
-	// X component
-
-	float InvD = 1.0f / Direction.x;
-	float T0 = (Min.x - Origin.x) * InvD;
-	float T1 = (Max.y - Origin.x) * InvD;
-
-	float ThisTMin = TMin;
-	float ThisTMax = TMax;
-
-	if (InvD < 0.0f)
-	{
-		float Temp = T0;
-		T0 = T1;
-		T1 = Temp;
-	}
-
-	ThisTMin = T0 > ThisTMin ? T0 : ThisTMin;
-	ThisTMax = T1 < ThisTMax ? T1 : TMax;
-
-	if (ThisTMax <= ThisTMin)
-	{
-		return false;
-	}
-
-	// Y component
-
-	InvD = 1.0f / Direction.y;
-	T0 = (Min.x - Origin.y) * InvD;
-	T1 = (Max.y - Origin.y) * InvD;
-
-	if (InvD < 0.0f)
-	{
-		float Temp = T0;
-		T0 = T1;
-		T1 = Temp;
-	}
-
-	ThisTMin = T0 > ThisTMin ? T0 : ThisTMin;
-	ThisTMax = T1 < ThisTMax ? T1 : ThisTMax;
-
-	if (ThisTMax <= ThisTMin)
-	{
-		return false;
-	}
-
-	// Z component
-
-	InvD = 1.0f / Direction.z;
-	T0 = (Min.x - Origin.z) * InvD;
-	T1 = (Max.y - Origin.z) * InvD;
-
-	if (InvD < 0.0f)
-	{
-		float Temp = T0;
-		T0 = T1;
-		T1 = Temp;
-	}
-
-	ThisTMin = T0 > ThisTMin ? T0 : ThisTMin;
-	ThisTMax = T1 < ThisTMax ? T1 : ThisTMax;
-
-	if (ThisTMax <= ThisTMin)
-	{
-		return false;
-	}
-
-	return true;
 }

@@ -24,11 +24,11 @@ public:
 	inline FVector& operator*=(const float t);
 	inline FVector& operator/=(const float t);
 	inline operator ispc::float3();
+	inline operator ispc::float3() const;
 
 	inline float Length() const { return sqrtf(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]); }
 	inline float SquaredLength() const { return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; }
 	inline void Normalize();
-	inline ispc::float3 ToISPCFVector();
 
 	__declspec (align(16)) union
 	{
@@ -87,6 +87,11 @@ inline FVector operator*(float t, const FVector &v)
 inline FVector operator/(const FVector &v, float t)
 {
 	return FVector(v.e[0] / t, v.e[1] / t, v.e[2] / t);
+}
+
+inline FVector operator/(float t, const FVector &v)
+{
+	return FVector(t / v.e[0], t / v.e[1], t / v.e[2]);
 }
 
 inline float Dot(const FVector &v1, const FVector &v2)
@@ -164,7 +169,7 @@ inline FVector::operator ispc::float3()
 	return t;
 }
 
-inline ispc::float3 FVector::ToISPCFVector()
+inline FVector::operator ispc::float3() const
 {
 	ispc::float3 t;
 
