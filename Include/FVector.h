@@ -9,7 +9,7 @@ class FVector
 public:
 	FVector() {}
 	FVector(const FVector &v) { e[0] = v.e[0]; e[1] = v.e[1]; e[2] = v.e[2]; }
-	FVector(const ispc::float3 &v) { e[0] = v.x; e[1] = v.y; e[2] = v.z; }
+	FVector(const ispc::float3 &v) { e[0] = v.e[0]; e[1] = v.e[1]; e[2] = v.e[2]; }
 	FVector(float e0, float e1, float e2) { e[0] = e0; e[1] = e1; e[2] = e2; }
 
 	inline const FVector& operator+() const { return *this; }
@@ -163,9 +163,9 @@ inline FVector::operator ispc::float3()
 {
 	ispc::float3 t;
 
-	t.x = e[0];
-	t.y = e[1];
-	t.z = e[2];
+	t.e[0] = e[0];
+	t.e[1] = e[1];
+	t.e[2] = e[2];
 	return t;
 }
 
@@ -173,8 +173,8 @@ inline FVector::operator ispc::float3() const
 {
 	ispc::float3 t;
 
-	t.x = e[0];
-	t.y = e[1];
-	t.z = e[2];
+	t.e[0] = e[0];
+	t.e[1] = e[1];
+	t.e[2] = e[2];
 	return t;
 }
