@@ -17,6 +17,7 @@
 #define HEIGHT 100
 #define SAMPLES 100
 #define PIXEL_COMPONENTS 3
+#define MAX_BOUNCES 50
 
 static const bool bUseISPC = true;
 
@@ -77,7 +78,61 @@ IObject *RandomWorld()
 	return new BVHNode(List, i, 0, 1);
 }
 
-FVector Color(const Ray& R, IObject *World, int32 Depth)
+bool FindRayIntersection(const Ray& R, IObject *World, FHit& Hit)
+{
+	if (World->Hit(R, 0.001f, FLT_MAX, Hit))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+FVector Color1(const Ray& R, IObject *World)
+{
+	FVector StartColor(1.0f, 1.0f, 1.0f);
+	FVector EndColor(0.5f, 0.7f, 1.0f);
+
+	FHit Hit;
+
+	if (FindRayIntersection(R, World, Hit))
+	{
+		FVector Attenuation;
+		Ray Scattered;
+
+		Ray SubmitRay = R;
+		FVector Sum(1, 1, 1);
+		int32 Bounces = 0;
+
+		while (Bounces < MAX_BOUNCES && Hit.Material->Scatter(SubmitRay, Hit, Attenuation, Scattered))
+		{
+			Sum *= Attenuation;
+
+			if (!FindRayIntersection(Scattered, World, Hit))
+			{
+				FVector UnitDirection = UnitVector(Scattered.GetDirection());
+				float t = 0.5f * (UnitDirection.y + 1.0f);
+				Sum *= (1.0f - t) * StartColor + t * EndColor;
+				return Sum;
+			}
+
+			SubmitRay = Scattered;
+			Bounces += 1;
+		}
+
+		return FVector(0, 0, 0);
+	}
+	else
+	{
+		FVector UnitDirection = UnitVector(R.GetDirection());
+		float t = 0.5f * (UnitDirection.y + 1.0f);
+		return (1.0f - t) * StartColor + t * EndColor;
+	}
+}
+
+FVector Color(const Ray& R, IObject *World, int32 Bounces)
 {
 	FVector StartColor(1.0f, 1.0f, 1.0f);
 	FVector EndColor(0.5f, 0.7f, 1.0f);
@@ -88,9 +143,9 @@ FVector Color(const Ray& R, IObject *World, int32 Depth)
 		Ray Scattered;
 		FVector Attenuation;
 
-		if (Depth < 50 && Hit.Material->Scatter(R, Hit, Attenuation, Scattered))
+		if (Bounces < MAX_BOUNCES && Hit.Material->Scatter(R, Hit, Attenuation, Scattered))
 		{
-			return Attenuation * Color(Scattered, World, Depth + 1);
+			return Attenuation * Color(Scattered, World, Bounces + 1);
 		}
 		else
 		{
@@ -145,7 +200,7 @@ int main()
 
 				for (int32 s = 0; s < SAMPLES; s++)
 				{
-					PixelColor += Color(Ray(ISPCRays[s].Origin, ISPCRays[s].Direction, ISPCRays[s].Time), World, 0);
+					PixelColor += Color1(Ray(ISPCRays[s].Origin, ISPCRays[s].Direction, ISPCRays[s].Time), World);
 				}
 
 				PixelColor /= float(SAMPLES);
