@@ -27,8 +27,6 @@
     <ClInclude Include="Include\Object.h" />
     <ClInclude Include="Include\Ray.h" />
     <ClInclude Include="Include\Sphere.h" />
-    <ClInclude Include="Include\stb\stb_image.h" />
-    <ClInclude Include="Include\stb\stb_image_write.h" />
     <ClInclude Include="Include\Texture.h" />
     <ClInclude Include="Include\utils\DebugPrint.h" />
     <ClInclude Include="Include\utils\ImageWriter.h" />
