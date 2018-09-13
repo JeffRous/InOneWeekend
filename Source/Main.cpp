@@ -90,46 +90,55 @@ bool FindRayIntersection(const Ray& R, IObject *World, FHit& Hit)
 	}
 }
 
-FVector Color1(const Ray& R, IObject *World)
+FVector GetPixel(IObject *World, ispc::Ray *Rays)
 {
+	FVector PixelColor(0, 0, 0);
 	FVector StartColor(1.0f, 1.0f, 1.0f);
 	FVector EndColor(0.5f, 0.7f, 1.0f);
 
 	FHit Hit;
 
-	if (FindRayIntersection(R, World, Hit))
+	for (int32 s = 0; s < SAMPLES; s++)
 	{
-		FVector Attenuation;
-		Ray Scattered;
+		Ray R(Rays[s].Origin, Rays[s].Direction, Rays[s].Time);
 
-		Ray SubmitRay = R;
-		FVector Sum(1, 1, 1);
-		int32 Bounces = 0;
-
-		while (Bounces < MAX_BOUNCES && Hit.Material->Scatter(SubmitRay, Hit, Attenuation, Scattered))
+		if (FindRayIntersection(R, World, Hit))
 		{
-			Sum *= Attenuation;
+			FVector Attenuation;
+			Ray Scattered;
 
-			if (!FindRayIntersection(Scattered, World, Hit))
+			Ray SubmitRay = R;
+			FVector Sum(1, 1, 1);
+			int32 Bounces = 0;
+
+			while (Bounces < MAX_BOUNCES && Hit.Material->Scatter(SubmitRay, Hit, Attenuation, Scattered))
 			{
-				FVector UnitDirection = UnitVector(Scattered.GetDirection());
-				float t = 0.5f * (UnitDirection.y + 1.0f);
-				Sum *= (1.0f - t) * StartColor + t * EndColor;
-				return Sum;
+				Sum *= Attenuation;
+
+				if (!FindRayIntersection(Scattered, World, Hit))
+				{
+					FVector UnitDirection = UnitVector(Scattered.GetDirection());
+					float t = 0.5f * (UnitDirection.y + 1.0f);
+					Sum *= (1.0f - t) * StartColor + t * EndColor;
+					PixelColor += Sum;
+					break;
+				}
+
+				SubmitRay = Scattered;
+				Bounces += 1;
 			}
-
-			SubmitRay = Scattered;
-			Bounces += 1;
 		}
+		else
+		{
+			FVector UnitDirection = UnitVector(R.GetDirection());
+			float t = 0.5f * (UnitDirection.y + 1.0f);
+			PixelColor += (1.0f - t) * StartColor + t * EndColor;
+		}
+	}
 
-		return FVector(0, 0, 0);
-	}
-	else
-	{
-		FVector UnitDirection = UnitVector(R.GetDirection());
-		float t = 0.5f * (UnitDirection.y + 1.0f);
-		return (1.0f - t) * StartColor + t * EndColor;
-	}
+	PixelColor /= float(SAMPLES);
+	PixelColor = FVector(sqrtf(PixelColor.r), sqrtf(PixelColor.g), sqrtf(PixelColor.b));
+	return PixelColor;
 }
 
 FVector Color(const Ray& R, IObject *World, int32 Bounces)
@@ -189,22 +198,15 @@ int main()
 		concurrency::parallel_for(int32(0), HEIGHT, [&](int32 j)
 		//for (int32 j = 0; j < HEIGHT; j++)
 		{
+			ispc::Ray Rays[SAMPLES];
+
 			for (int32 i = 0; i < WIDTH; i++)
 			{
-				FVector PixelColor(0, 0, 0);
-
-				ispc::Ray ISPCRays[SAMPLES];
 				ispc::FCamera ISPCCamera = Camera.GetISPCCamera();
 
-				ispc::GetRays(ISPCRays, ISPCCamera, SAMPLES, i, WIDTH, j, HEIGHT);
+				ispc::GetRays(Rays, ISPCCamera, SAMPLES, i, WIDTH, j, HEIGHT);
 
-				for (int32 s = 0; s < SAMPLES; s++)
-				{
-					PixelColor += Color1(Ray(ISPCRays[s].Origin, ISPCRays[s].Direction, ISPCRays[s].Time), World);
-				}
-
-				PixelColor /= float(SAMPLES);
-				PixelColor = FVector(sqrtf(PixelColor.r), sqrtf(PixelColor.g), sqrtf(PixelColor.b));
+				FVector PixelColor = GetPixel(World, Rays);
 
 				uint32 PixelToWrite = ((HEIGHT - 1 - j)*WIDTH*PIXEL_COMPONENTS) + (i*PIXEL_COMPONENTS);
 
