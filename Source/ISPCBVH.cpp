@@ -83,8 +83,62 @@ ISPCBVH::ISPCBVH(IObject** List, int32 ListSize, float BeginTime, float EndTime)
 	RootNode = CreateISPCBVHNode(List, ListSize, nullptr, BeginTime, EndTime);
 }
 
+FVector GetCenterAt(ISPCBVHNode *Node, float Time)
+{
+	if (Node->ObjectType == EObjectType::Sphere)
+	{
+		return Node->Obj.Center0;
+	}
+	else if (Node->ObjectType == EObjectType::MovingSphere)
+	{
+		return Node->Obj.Center0 + ((Time - Node->Obj.Time0) / (Node->Obj.Time1 - Node->Obj.Time0)) * (Node->Obj.Center1 - Node->Obj.Center0);
+	}
+
+	return FVector(0, 0, 0);
+}
+
 bool RayIntersect(const Ray& R, ISPCBVHNode *Node, float TMin, float TMax, FHit& Hit)
 {
+	/*
+	FVector GetCenterAtTime = GetCenterAt(Node, R.GetTime());
+	FVector RayDirection = R.GetDirection();
+	FVector Oc = R.GetOrigin() - GetCenterAtTime;
+
+	float a = Dot(RayDirection, RayDirection);
+	float b = Dot(Oc, RayDirection);
+	float c = Dot(Oc, Oc) - Node->Obj.Radius * Node->Obj.Radius;
+	float Discriminant = b * b - a * c;
+
+	if (Discriminant > 0)
+	{
+		float DiscSqrt = sqrtf(Discriminant);
+		float Temp = (-b - DiscSqrt) / a;
+
+		auto SetHit = [&]()
+		{
+			Hit.T = Temp;
+			Hit.P = R.PointAtT(Temp);
+			Hit.Normal = (Hit.P - GetCenterAtTime) / Node->Obj.Radius;
+			Hit.MaterialType = Node->MaterialType;
+		};
+
+		if (Temp < TMax && Temp > TMin)
+		{
+			SetHit();
+			return true;
+		}
+
+		Temp = (-b + DiscSqrt) / a;
+
+		if (Temp < TMax && Temp > TMin)
+		{
+			SetHit();
+			return true;
+		}
+	}
+
+	return false;
+	*/
 	return Node->Object->Hit(R, TMin, TMax, Hit);
 }
 

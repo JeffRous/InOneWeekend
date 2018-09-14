@@ -1,22 +1,6 @@
 #pragma once
 
-#include "FVector.h"
-
-enum class ETextureType
-{
-	None = 0,
-	Constant,
-	Checker
-};
-
-struct Texture
-{
-	ETextureType Type;
-	FVector Color;
-
-	FVector ColorEven;
-	FVector ColorOdd;
-};
+#include"ISPCDefines.h"
 
 FVector Sample(const Texture& T, float u, float v, const FVector& p);
 
@@ -24,7 +8,7 @@ class ITexture
 {
 public:
 	virtual FVector Value(float u, float v, const FVector& p) const = 0;
-	virtual Texture GetTexture() const = 0;
+	virtual Texture* GetTexture() = 0;
 };
 
 class ConstantTexture : public ITexture
@@ -38,7 +22,7 @@ public:
 	}
 
 	virtual FVector Value(float u, float v, const FVector& p) const;
-	virtual Texture GetTexture() const { return T; }
+	virtual Texture* GetTexture() { return &T; }
 
 private:
 	Texture T;
@@ -56,7 +40,7 @@ public:
 	}
 
 	virtual FVector Value(float u, float v, const FVector& p) const;
-	virtual Texture GetTexture() const { return T; }
+	virtual Texture* GetTexture() { return &T; }
 
 private:
 	Texture T;

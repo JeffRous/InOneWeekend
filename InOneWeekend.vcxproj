@@ -24,6 +24,7 @@
     <ClInclude Include="Include\Camera.h" />
     <ClInclude Include="Include\FVector.h" />
     <ClInclude Include="Include\ISPCBVH.h" />
+    <ClInclude Include="Include\ISPCDefines.h" />
     <ClInclude Include="Include\Material.h" />
     <ClInclude Include="Include\Object.h" />
     <ClInclude Include="Include\Ray.h" />

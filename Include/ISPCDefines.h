@@ -1,0 +1,51 @@
+#pragma once
+
+#include "FVector.h"
+
+enum class EObjectType
+{
+	BVH = 0,
+	Sphere,
+	MovingSphere
+};
+
+enum class EMaterialType
+{
+	None = 0,
+	Lambertian,
+	Dielectric,
+	Metal
+};
+
+enum class ETextureType
+{
+	None = 0,
+	Constant,
+	Checker
+};
+
+struct Object
+{
+	EObjectType Type;
+
+	FVector Center0, Center1;
+	float Time0, Time1;
+	float Radius;
+};
+
+struct Texture
+{
+	ETextureType Type;
+	FVector Color;
+
+	FVector ColorEven;
+	FVector ColorOdd;
+};
+
+struct Material
+{
+	EMaterialType Type;
+	Texture Albedo;
+	float Ri;
+	float Roughness;
+};

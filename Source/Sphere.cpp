@@ -20,7 +20,7 @@ bool Sphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 			Hit.P = R.PointAtT(Temp);
 			Hit.Normal = (Hit.P - Center) / Radius;
 			Hit.MaterialType = GetMaterialType();
-			Hit.Material = Material;
+			Hit.Material = IMat;
 		};
 
 		if (Temp < TMax && Temp > TMin)
@@ -54,7 +54,7 @@ EObjectType Sphere::GetObjectType() const
 
 EMaterialType Sphere::GetMaterialType() const
 {
-	return Material->GetMaterialType();
+	return IMat->GetMaterialType();
 }
 
 void Sphere::Debug() const
@@ -84,7 +84,7 @@ bool MovingSphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 			Hit.P = R.PointAtT(Temp);
 			Hit.Normal = (Hit.P - GetCenterAtTime) / Radius;
 			Hit.MaterialType = GetMaterialType();
-			Hit.Material = Material;
+			Hit.Material = IMat;
 		};
 
 		if (Temp < TMax && Temp > TMin)
@@ -123,7 +123,7 @@ EObjectType MovingSphere::GetObjectType() const
 
 EMaterialType MovingSphere::GetMaterialType() const
 {
-	return Material->GetMaterialType();
+	return IMat->GetMaterialType();
 }
 
 FVector MovingSphere::GetCenterAt(float Time) const

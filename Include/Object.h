@@ -2,21 +2,7 @@
 
 #include "Ray.h"
 #include "AABB.h"
-
-enum class EObjectType
-{
-	BVH = 0,
-	Sphere,
-	MovingSphere
-};
-
-enum class EMaterialType
-{
-	None = 0,
-	Lambertian,
-	Dielectric,
-	Metal
-};
+#include "ISPCDefines.h"
 
 class IMaterial;
 
@@ -35,6 +21,7 @@ public:
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const = 0;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const = 0;
 
+	virtual Object* GetObject() = 0;
 	virtual EObjectType GetObjectType() const = 0;
 	virtual EMaterialType GetMaterialType() const = 0;
 
@@ -50,6 +37,7 @@ public:
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
 
+	virtual Object* GetObject() { return nullptr; }
 	virtual EObjectType GetObjectType() const;
 	virtual EMaterialType GetMaterialType() const;
 
