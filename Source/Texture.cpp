@@ -1,20 +1,36 @@
 #include "Texture.h"
 
+FVector Sample(const Texture& T, float u, float v, const FVector& p)
+{
+	if (T.Type == ETextureType::Constant)
+	{
+		return T.Color;
+	}
+	else if (T.Type == ETextureType::Checker)
+	{
+		float Sines = sinf(10 * p.x)*sinf(10 * p.y)*sinf(10 * p.z);
+
+		if (Sines < 0)
+		{
+			return T.ColorOdd;
+		}
+		else
+		{
+			return T.ColorEven;
+		}
+	}
+	else
+	{
+		return FVector(0, 0, 0);
+	}
+}
+
 FVector ConstantTexture::Value(float u, float v, const FVector& p) const
 {
-	return Color;
+	return Sample(T, u, v, p);
 }
 
 FVector CheckerTexture::Value(float u, float v, const FVector& p) const
 {
-	float Sines = sinf(10 * p.x)*sinf(10 * p.y)*sinf(10 * p.z);
-
-	if (Sines < 0)
-	{
-		return Odd->Value(u, v, p);
-	}
-	else
-	{
-		return Even->Value(u, v, p);
-	}
+	return Sample(T, u, v, p);
 }
