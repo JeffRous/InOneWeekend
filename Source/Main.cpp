@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Material.h"
 #include "BVH.h"
+#include "ISPCBVH.h"
 #include "Raytracing_ispc.h"
 
 #define WIDTH 200
@@ -75,7 +76,8 @@ IObject *RandomWorld()
 	List[i++] = new Sphere(FVector(4, 1, 0), 1, new Metal(FVector(0.7f, 0.6f, 0.5f), 0.0f));
 
 	//return new ObjectList(List, i);
-	return new BVHNode(List, i, 0, 1);
+	//return new BVHNode(List, i, 0, 1);
+	return new ISPCBVH(List, i, 0, 1);
 }
 
 bool FindRayIntersection(const Ray& R, IObject *World, FHit& Hit)

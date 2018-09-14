@@ -55,6 +55,16 @@ bool ObjectList::BoundingBox(float T0, float T1, AABB& Box) const
 	return true;
 }
 
+EObjectType ObjectList::GetObjectType() const
+{
+	return EObjectType::BVH;
+}
+
+EMaterialType ObjectList::GetMaterialType() const
+{
+	return EMaterialType::None;
+}
+
 void ObjectList::Debug() const
 {
 	DebugPrint("ObjectList %x ListSize: %d\n", this, ListSize);

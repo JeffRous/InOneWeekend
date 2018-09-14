@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Object.h"
+#include "Material.h"
 
 class Sphere : public IObject
 {
@@ -10,6 +11,9 @@ public:
 
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
+
+	virtual EObjectType GetObjectType() const;
+	virtual EMaterialType GetMaterialType() const;
 
 	virtual void Debug() const;
 
@@ -29,6 +33,9 @@ public:
 
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
+
+	virtual EObjectType GetObjectType() const;
+	virtual EMaterialType GetMaterialType() const;
 
 	virtual void Debug() const;
 

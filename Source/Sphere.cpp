@@ -19,6 +19,7 @@ bool Sphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 			Hit.T = Temp;
 			Hit.P = R.PointAtT(Temp);
 			Hit.Normal = (Hit.P - Center) / Radius;
+			Hit.MaterialType = GetMaterialType();
 			Hit.Material = Material;
 		};
 
@@ -44,6 +45,16 @@ bool Sphere::BoundingBox(float T0, float T1, AABB& Box) const
 {
 	Box = AABB(Center - FVector(Radius, Radius, Radius), Center + FVector(Radius, Radius, Radius));
 	return true;
+}
+
+EObjectType Sphere::GetObjectType() const
+{
+	return EObjectType::Sphere;
+}
+
+EMaterialType Sphere::GetMaterialType() const
+{
+	return Material->GetMaterialType();
 }
 
 void Sphere::Debug() const
@@ -72,6 +83,7 @@ bool MovingSphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 			Hit.T = Temp;
 			Hit.P = R.PointAtT(Temp);
 			Hit.Normal = (Hit.P - GetCenterAtTime) / Radius;
+			Hit.MaterialType = GetMaterialType();
 			Hit.Material = Material;
 		};
 
@@ -102,6 +114,16 @@ bool MovingSphere::BoundingBox(float T0, float T1, AABB& Box) const
 	AABB Box1 = AABB(CenterT1 - FVector(Radius, Radius, Radius), CenterT1 + FVector(Radius, Radius, Radius));
 	Box = SurroundingBox(Box0, Box1);
 	return true;
+}
+
+EObjectType MovingSphere::GetObjectType() const
+{
+	return EObjectType::MovingSphere;
+}
+
+EMaterialType MovingSphere::GetMaterialType() const
+{
+	return Material->GetMaterialType();
 }
 
 FVector MovingSphere::GetCenterAt(float Time) const

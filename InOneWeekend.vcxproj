@@ -23,6 +23,7 @@
     <ClInclude Include="Include\BVH.h" />
     <ClInclude Include="Include\Camera.h" />
     <ClInclude Include="Include\FVector.h" />
+    <ClInclude Include="Include\ISPCBVH.h" />
     <ClInclude Include="Include\Material.h" />
     <ClInclude Include="Include\Object.h" />
     <ClInclude Include="Include\Ray.h" />
@@ -41,6 +42,7 @@
     <ClCompile Include="Source\AABB.cpp" />
     <ClCompile Include="Source\BVH.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
+    <ClCompile Include="Source\ISPCBVH.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Material.cpp" />
     <ClCompile Include="Source\Object.cpp" />

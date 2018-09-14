@@ -11,6 +11,7 @@ class IMaterial
 {
 public:
 	virtual bool Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const = 0;
+	virtual EMaterialType GetMaterialType() const = 0;
 };
 
 class Lambertian : public IMaterial
@@ -19,6 +20,7 @@ public:
 	Lambertian(ITexture *t) : Albedo(t) {}
 
 	virtual bool Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const;
+	virtual EMaterialType GetMaterialType() const;
 private:
 	ITexture *Albedo;
 };
@@ -29,6 +31,7 @@ public:
 	Metal(const FVector& InAlbedo, float InFuzz) : Albedo(InAlbedo) { InFuzz < 1 ? Fuzz = InFuzz : Fuzz = 1; }
 
 	virtual bool Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const;
+	virtual EMaterialType GetMaterialType() const;
 private:
 	FVector Albedo;
 	float Fuzz;
@@ -40,6 +43,7 @@ public:
 	Dielectric(float InRefIndex) : RefIndex(InRefIndex) {}
 
 	virtual bool Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const;
+	virtual EMaterialType GetMaterialType() const;
 private:
 	float RefIndex;
 };

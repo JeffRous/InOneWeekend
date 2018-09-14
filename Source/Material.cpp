@@ -50,12 +50,22 @@ bool Lambertian::Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation
 	return true;
 }
 
+EMaterialType Lambertian::GetMaterialType() const
+{
+	return EMaterialType::Lambertian;
+}
+
 bool Metal::Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const
 {
 	FVector Reflected = Reflect(UnitVector(InRay.GetDirection()), Hit.Normal);
 	Scattered = Ray(Hit.P, Reflected + Fuzz * RandomInUnitSphere(), InRay.GetTime());
 	Attenuation = Albedo;
 	return Dot(Scattered.GetDirection(), Hit.Normal) > 0;
+}
+
+EMaterialType Metal::GetMaterialType() const
+{
+	return EMaterialType::Metal;
 }
 
 bool Dielectric::Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const
@@ -102,4 +112,9 @@ bool Dielectric::Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation
 	}
 
 	return true;
+}
+
+EMaterialType Dielectric::GetMaterialType() const
+{
+	return EMaterialType::Dielectric;
 }
