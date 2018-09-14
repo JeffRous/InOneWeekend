@@ -3,10 +3,10 @@
 
 bool Sphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 {
-	FVector Oc = R.GetOrigin() - Center;
+	FVector Oc = R.GetOrigin() - Obj.Center0;
 	float a = Dot(R.GetDirection(), R.GetDirection());
 	float b = Dot(Oc, R.GetDirection());
-	float c = Dot(Oc, Oc) - Radius*Radius;
+	float c = Dot(Oc, Oc) - Obj.Radius*Obj.Radius;
 	float Discriminant = b*b - a*c;
 
 	if (Discriminant > 0)
@@ -18,7 +18,7 @@ bool Sphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 		{
 			Hit.T = Temp;
 			Hit.P = R.PointAtT(Temp);
-			Hit.Normal = (Hit.P - Center) / Radius;
+			Hit.Normal = (Hit.P - Obj.Center0) / Obj.Radius;
 			Hit.Mat = &Obj.Mat;
 		};
 
@@ -42,13 +42,13 @@ bool Sphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 
 bool Sphere::BoundingBox(float T0, float T1, AABB& Box) const
 {
-	Box = AABB(Center - FVector(Radius, Radius, Radius), Center + FVector(Radius, Radius, Radius));
+	Box = AABB(Obj.Center0 - FVector(Obj.Radius, Obj.Radius, Obj.Radius), Obj.Center0 + FVector(Obj.Radius, Obj.Radius, Obj.Radius));
 	return true;
 }
 
 void Sphere::Debug() const
 {
-	DebugPrint("Sphere %x Center: %.2f,%.2f,%.2f Radius: %.2f\n", this, Center.x, Center.y, Center.z, Radius);
+	DebugPrint("Sphere %x Center: %.2f,%.2f,%.2f Radius: %.2f\n", this, Obj.Center0.x, Obj.Center0.y, Obj.Center0.z, Obj.Radius);
 }
 
 bool MovingSphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
@@ -59,7 +59,7 @@ bool MovingSphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 
 	float a = Dot(RayDirection, RayDirection);
 	float b = Dot(Oc, RayDirection);
-	float c = Dot(Oc, Oc) - Radius * Radius;
+	float c = Dot(Oc, Oc) - Obj.Radius * Obj.Radius;
 	float Discriminant = b * b - a * c;
 
 	if (Discriminant > 0)
@@ -71,7 +71,7 @@ bool MovingSphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 		{
 			Hit.T = Temp;
 			Hit.P = R.PointAtT(Temp);
-			Hit.Normal = (Hit.P - GetCenterAtTime) / Radius;
+			Hit.Normal = (Hit.P - GetCenterAtTime) / Obj.Radius;
 			Hit.Mat = &Obj.Mat;
 		};
 
@@ -98,19 +98,19 @@ bool MovingSphere::BoundingBox(float T0, float T1, AABB& Box) const
 	FVector CenterT0 = GetCenterAt(T0);
 	FVector CenterT1 = GetCenterAt(T1);
 
-	AABB Box0 = AABB(CenterT0 - FVector(Radius, Radius, Radius), CenterT0 + FVector(Radius, Radius, Radius));
-	AABB Box1 = AABB(CenterT1 - FVector(Radius, Radius, Radius), CenterT1 + FVector(Radius, Radius, Radius));
+	AABB Box0 = AABB(CenterT0 - FVector(Obj.Radius, Obj.Radius, Obj.Radius), CenterT0 + FVector(Obj.Radius, Obj.Radius, Obj.Radius));
+	AABB Box1 = AABB(CenterT1 - FVector(Obj.Radius, Obj.Radius, Obj.Radius), CenterT1 + FVector(Obj.Radius, Obj.Radius, Obj.Radius));
 	Box = SurroundingBox(Box0, Box1);
 	return true;
 }
 
 FVector MovingSphere::GetCenterAt(float Time) const
 {
-	return Center0 + ((Time - Time0) / (Time1 - Time0)) * (Center1 - Center0);
+	return Obj.Center0 + ((Time - Obj.Time0) / (Obj.Time1 - Obj.Time0)) * (Obj.Center1 - Obj.Center0);
 }
 
 void MovingSphere::Debug() const
 {
 	DebugPrint("MovingSphere %x Center0: %.2f,%.2f,%.2f Center1: %.2f,%.2f,%.2f Time0: %.2f Time1: %.2f Radius: %.2f\n",
-		this, Center0.x, Center0.y, Center0.z, Center1.x, Center1.y, Center1.z, Time0, Time1, Radius);
+		this, Obj.Center0.x, Obj.Center0.y, Obj.Center0.z, Obj.Center1.x, Obj.Center1.y, Obj.Center1.z, Obj.Time0, Obj.Time1, Obj.Radius);
 }
