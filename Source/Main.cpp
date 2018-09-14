@@ -61,7 +61,7 @@ IObject *RandomWorld()
 				else if (ChooseMaterial < 0.95f) // Metal
 				{
 					List[i++] = new Sphere(Center, 0.2f,
-						new Metal(FVector(float(0.5f*(1 + Random::drand48())), float(0.5f*(1 + Random::drand48())), float(0.5f*(1 + Random::drand48()))), float(0.5f*Random::drand48())));
+						new Metal(new ConstantTexture(FVector(float(0.5f*(1 + Random::drand48())), float(0.5f*(1 + Random::drand48())), float(0.5f*(1 + Random::drand48())))), float(0.5f*Random::drand48())));
 				}
 				else // glass
 				{
@@ -73,7 +73,7 @@ IObject *RandomWorld()
 
 	List[i++] = new Sphere(FVector(0, 1, 0), 1, new Dielectric(1.5f));
 	List[i++] = new Sphere(FVector(-4, 1, 0), 1, new Lambertian(new ConstantTexture(FVector(0.4f, 0.2f, 0.1f))));
-	List[i++] = new Sphere(FVector(4, 1, 0), 1, new Metal(FVector(0.7f, 0.6f, 0.5f), 0.0f));
+	List[i++] = new Sphere(FVector(4, 1, 0), 1, new Metal(new ConstantTexture(FVector(0.7f, 0.6f, 0.5f)), 0.0f));
 
 	//return new ObjectList(List, i);
 	//return new BVHNode(List, i, 0, 1);
