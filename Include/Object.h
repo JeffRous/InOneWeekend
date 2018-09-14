@@ -11,8 +11,7 @@ struct FHit
 	float T; // Ray parameter
 	FVector P; // 3D Point on ray
 	FVector Normal;
-	EMaterialType MaterialType;
-	IMaterial *Material;
+	const Material *Mat;
 };
 
 class IObject
@@ -22,8 +21,6 @@ public:
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const = 0;
 
 	virtual Object* GetObject() = 0;
-	virtual EObjectType GetObjectType() const = 0;
-	virtual EMaterialType GetMaterialType() const = 0;
 
 	virtual void Debug() const = 0;
 };
@@ -38,8 +35,6 @@ public:
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
 
 	virtual Object* GetObject() { return nullptr; }
-	virtual EObjectType GetObjectType() const;
-	virtual EMaterialType GetMaterialType() const;
 
 	virtual void Debug() const;
 

@@ -7,12 +7,10 @@ struct ISPCBVHNode
 {
 	void Debug() const;
 
-	Object Obj;
-	Material Mat;
-
 	AABB Box;
+
 	EObjectType ObjectType;
-	EMaterialType MaterialType;
+	Object *Obj;
 	IObject *Object;
 
 	ISPCBVHNode* Parent;
@@ -30,8 +28,6 @@ public:
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
 
 	virtual Object* GetObject() { return nullptr; }
-	virtual EObjectType GetObjectType() const;
-	virtual EMaterialType GetMaterialType() const;
 
 	virtual void Debug() const;
 private:

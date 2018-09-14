@@ -113,16 +113,6 @@ bool BVHNode::BoundingBox(float T0, float T1, AABB& B) const
 	return true;
 }
 
-EObjectType BVHNode::GetObjectType() const
-{
-	return EObjectType::BVH;
-}
-
-EMaterialType BVHNode::GetMaterialType() const
-{
-	return EMaterialType::None;
-}
-
 void BVHNode::Debug() const
 {
 	Left->Debug();

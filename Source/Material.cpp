@@ -42,23 +42,23 @@ static bool Refract(const FVector& V, const FVector& N, float NiOverNt, FVector&
 	}
 }
 
-bool MaterialScatter(const Material& Mat, const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered)
+bool MaterialScatter(const Material* Mat, const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered)
 {
-	if (Mat.Type == EMaterialType::Lambertian)
+	if (Mat->Type == EMaterialType::Lambertian)
 	{
 		FVector Target = Hit.P + Hit.Normal + RandomInUnitSphere();
 		Scattered = Ray(Hit.P, Target - Hit.P, InRay.GetTime());
-		Attenuation = Sample(Mat.Albedo, 0, 0, Hit.P);
+		Attenuation = Sample(Mat->Albedo, 0, 0, Hit.P);
 		return true;
 	}
-	else if (Mat.Type == EMaterialType::Metal)
+	else if (Mat->Type == EMaterialType::Metal)
 	{
 		FVector Reflected = Reflect(UnitVector(InRay.GetDirection()), Hit.Normal);
-		Scattered = Ray(Hit.P, Reflected + Mat.Roughness * RandomInUnitSphere(), InRay.GetTime());
-		Attenuation = Sample(Mat.Albedo, 0, 0, Hit.P);
+		Scattered = Ray(Hit.P, Reflected + Mat->Roughness * RandomInUnitSphere(), InRay.GetTime());
+		Attenuation = Sample(Mat->Albedo, 0, 0, Hit.P);
 		return Dot(Scattered.GetDirection(), Hit.Normal) > 0;
 	}
-	else if (Mat.Type == EMaterialType::Dielectric)
+	else if (Mat->Type == EMaterialType::Dielectric)
 	{
 		FVector OutwardNormal;
 		FVector Reflected = Reflect(InRay.GetDirection(), Hit.Normal);
@@ -73,19 +73,19 @@ bool MaterialScatter(const Material& Mat, const Ray& InRay, const FHit& Hit, FVe
 		if (RayDirectionDotNormal > 0)
 		{
 			OutwardNormal = -Hit.Normal;
-			NiOverNt = Mat.Ri;
-			Cosine = Mat.Ri * RayDirectionDotNormal / InRay.GetDirection().Length();
+			NiOverNt = Mat->Ri;
+			Cosine = Mat->Ri * RayDirectionDotNormal / InRay.GetDirection().Length();
 		}
 		else
 		{
 			OutwardNormal = Hit.Normal;
-			NiOverNt = 1.0f / Mat.Ri;
+			NiOverNt = 1.0f / Mat->Ri;
 			Cosine = -RayDirectionDotNormal / InRay.GetDirection().Length();
 		}
 
 		if (Refract(InRay.GetDirection(), OutwardNormal, NiOverNt, Refracted))
 		{
-			ReflectProbability = Schlick(Cosine, Mat.Ri);
+			ReflectProbability = Schlick(Cosine, Mat->Ri);
 		}
 		else
 		{
@@ -109,30 +109,15 @@ bool MaterialScatter(const Material& Mat, const Ray& InRay, const FHit& Hit, FVe
 
 bool Lambertian::Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const
 {
-	return MaterialScatter(Mat, InRay, Hit, Attenuation, Scattered);
-}
-
-EMaterialType Lambertian::GetMaterialType() const
-{
-	return Mat.Type;
+	return MaterialScatter(&Mat, InRay, Hit, Attenuation, Scattered);
 }
 
 bool Metal::Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const
 {
-	return MaterialScatter(Mat, InRay, Hit, Attenuation, Scattered);
-}
-
-EMaterialType Metal::GetMaterialType() const
-{
-	return Mat.Type;
+	return MaterialScatter(&Mat, InRay, Hit, Attenuation, Scattered);
 }
 
 bool Dielectric::Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const
 {
-	return MaterialScatter(Mat, InRay, Hit, Attenuation, Scattered);
-}
-
-EMaterialType Dielectric::GetMaterialType() const
-{
-	return Mat.Type;
+	return MaterialScatter(&Mat, InRay, Hit, Attenuation, Scattered);
 }

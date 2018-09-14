@@ -113,7 +113,7 @@ FVector GetPixel(IObject *World, ispc::Ray *Rays)
 			FVector Sum(1, 1, 1);
 			int32 Bounces = 0;
 
-			while (Bounces < MAX_BOUNCES && Hit.Material->Scatter(SubmitRay, Hit, Attenuation, Scattered))
+			while (Bounces < MAX_BOUNCES && MaterialScatter(Hit.Mat, SubmitRay, Hit, Attenuation, Scattered))
 			{
 				Sum *= Attenuation;
 
@@ -154,7 +154,7 @@ FVector Color(const Ray& R, IObject *World, int32 Bounces)
 		Ray Scattered;
 		FVector Attenuation;
 
-		if (Bounces < MAX_BOUNCES && Hit.Material->Scatter(R, Hit, Attenuation, Scattered))
+		if (Bounces < MAX_BOUNCES && MaterialScatter(Hit.Mat, R, Hit, Attenuation, Scattered))
 		{
 			return Attenuation * Color(Scattered, World, Bounces + 1);
 		}

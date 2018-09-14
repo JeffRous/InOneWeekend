@@ -7,13 +7,12 @@
 
 FVector RandomInUnitSphere();
 
-bool MaterialScatter(const Material& Mat, const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered);
+bool MaterialScatter(const Material* Mat, const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered);
 
 class IMaterial
 {
 public:
 	virtual bool Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const = 0;
-	virtual EMaterialType GetMaterialType() const = 0;
 	virtual Material* GetMaterial() = 0;
 };
 
@@ -27,7 +26,6 @@ public:
 	}
 
 	virtual bool Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const;
-	virtual EMaterialType GetMaterialType() const;
 	virtual Material* GetMaterial() { return &Mat; }
 private:
 	Material Mat;
@@ -44,7 +42,6 @@ public:
 	}
 
 	virtual bool Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const;
-	virtual EMaterialType GetMaterialType() const;
 	virtual Material* GetMaterial() { return &Mat; }
 private:
 	Material Mat;
@@ -60,7 +57,6 @@ public:
 	}
 
 	virtual bool Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const;
-	virtual EMaterialType GetMaterialType() const;
 	virtual Material* GetMaterial() { return &Mat; }
 private:
 	Material Mat;

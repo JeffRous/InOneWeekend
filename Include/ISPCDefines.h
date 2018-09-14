@@ -24,15 +24,6 @@ enum class ETextureType
 	Checker
 };
 
-struct Object
-{
-	EObjectType Type;
-
-	FVector Center0, Center1;
-	float Time0, Time1;
-	float Radius;
-};
-
 struct Texture
 {
 	ETextureType Type;
@@ -48,4 +39,14 @@ struct Material
 	Texture Albedo;
 	float Ri;
 	float Roughness;
+};
+
+struct Object
+{
+	EObjectType Type;
+
+	Material Mat;
+	FVector Center0, Center1;
+	float Time0, Time1;
+	float Radius;
 };

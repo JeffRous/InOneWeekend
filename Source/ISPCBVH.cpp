@@ -9,28 +9,28 @@ ISPCBVHNode *CreateISPCBVHNode(IObject** List, int32 ListSize, ISPCBVHNode* Pare
 {
 	ISPCBVHNode *Node = new ISPCBVHNode;
 	Node->ObjectType = EObjectType::BVH;
-	Node->MaterialType = EMaterialType::None;
 	Node->Left = nullptr;
 	Node->Right = nullptr;
 	Node->Object = nullptr;
+	Node->Obj = nullptr;
 	Node->Parent = Parent;
 
 	if (ListSize == 1)
 	{
 		List[0]->BoundingBox(BeginTime, EndTime, Node->Box);
-		Node->ObjectType = List[0]->GetObjectType();
-		Node->MaterialType = List[0]->GetMaterialType();
+		Node->Obj = List[0]->GetObject();
+		Node->ObjectType = Node->Obj->Type;
 		Node->Object = List[0];
 	}
 	else if (ListSize == 2)
 	{
-	Node->Left = CreateISPCBVHNode(&List[0], 1, Node, BeginTime, EndTime);
-	Node->Right = CreateISPCBVHNode(&List[1], 1, Node, BeginTime, EndTime);
+		Node->Left = CreateISPCBVHNode(&List[0], 1, Node, BeginTime, EndTime);
+		Node->Right = CreateISPCBVHNode(&List[1], 1, Node, BeginTime, EndTime);
 	}
 	else
 	{
-	Node->Left = CreateISPCBVHNode(List, ListSize / 2, Node, BeginTime, EndTime);
-	Node->Right = CreateISPCBVHNode(List + ListSize / 2, ListSize - ListSize / 2, Node, BeginTime, EndTime);
+		Node->Left = CreateISPCBVHNode(List, ListSize / 2, Node, BeginTime, EndTime);
+		Node->Right = CreateISPCBVHNode(List + ListSize / 2, ListSize - ListSize / 2, Node, BeginTime, EndTime);
 	}
 
 	if (Node->Left != nullptr && Node->Right != nullptr)
@@ -85,13 +85,13 @@ ISPCBVH::ISPCBVH(IObject** List, int32 ListSize, float BeginTime, float EndTime)
 
 FVector GetCenterAt(ISPCBVHNode *Node, float Time)
 {
-	if (Node->ObjectType == EObjectType::Sphere)
+	if (Node->Obj->Type == EObjectType::Sphere)
 	{
-		return Node->Obj.Center0;
+		return Node->Obj->Center0;
 	}
-	else if (Node->ObjectType == EObjectType::MovingSphere)
+	else if (Node->Obj->Type == EObjectType::MovingSphere)
 	{
-		return Node->Obj.Center0 + ((Time - Node->Obj.Time0) / (Node->Obj.Time1 - Node->Obj.Time0)) * (Node->Obj.Center1 - Node->Obj.Center0);
+		return Node->Obj->Center0 + ((Time - Node->Obj->Time0) / (Node->Obj->Time1 - Node->Obj->Time0)) * (Node->Obj->Center1 - Node->Obj->Center0);
 	}
 
 	return FVector(0, 0, 0);
@@ -99,14 +99,13 @@ FVector GetCenterAt(ISPCBVHNode *Node, float Time)
 
 bool RayIntersect(const Ray& R, ISPCBVHNode *Node, float TMin, float TMax, FHit& Hit)
 {
-	/*
 	FVector GetCenterAtTime = GetCenterAt(Node, R.GetTime());
 	FVector RayDirection = R.GetDirection();
 	FVector Oc = R.GetOrigin() - GetCenterAtTime;
 
 	float a = Dot(RayDirection, RayDirection);
 	float b = Dot(Oc, RayDirection);
-	float c = Dot(Oc, Oc) - Node->Obj.Radius * Node->Obj.Radius;
+	float c = Dot(Oc, Oc) - Node->Obj->Radius * Node->Obj->Radius;
 	float Discriminant = b * b - a * c;
 
 	if (Discriminant > 0)
@@ -118,8 +117,8 @@ bool RayIntersect(const Ray& R, ISPCBVHNode *Node, float TMin, float TMax, FHit&
 		{
 			Hit.T = Temp;
 			Hit.P = R.PointAtT(Temp);
-			Hit.Normal = (Hit.P - GetCenterAtTime) / Node->Obj.Radius;
-			Hit.MaterialType = Node->MaterialType;
+			Hit.Normal = (Hit.P - GetCenterAtTime) / Node->Obj->Radius;
+			Hit.Mat = &Node->Obj->Mat;
 		};
 
 		if (Temp < TMax && Temp > TMin)
@@ -138,8 +137,8 @@ bool RayIntersect(const Ray& R, ISPCBVHNode *Node, float TMin, float TMax, FHit&
 	}
 
 	return false;
-	*/
-	return Node->Object->Hit(R, TMin, TMax, Hit);
+	
+	//return Node->Object->Hit(R, TMin, TMax, Hit);
 }
 
 ISPCBVHNode* Sibling(ISPCBVHNode *Current)
@@ -313,16 +312,6 @@ bool ISPCBVH::BoundingBox(float T0, float T1, AABB& B) const
 {
 	B = RootNode->Box;
 	return true;
-}
-
-EObjectType ISPCBVH::GetObjectType() const
-{
-	return EObjectType::BVH;
-}
-
-EMaterialType ISPCBVH::GetMaterialType() const
-{
-	return EMaterialType::None;
 }
 
 void ISPCBVH::Debug() const
