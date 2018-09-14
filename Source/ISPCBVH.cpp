@@ -1,9 +1,9 @@
+#include "ISPCDefines.h"
 #include "ISPCBVH.h"
+#include "AABB.h"
 #include "utils/Random.h"
 #include "utils/DebugPrint.h"
 #include <algorithm>
-#include <stack>
-#include <assert.h>
 
 ISPCBVHNode *CreateISPCBVHNode(IObject** List, int32 ListSize, ISPCBVHNode* Parent, float BeginTime, float EndTime)
 {
@@ -11,16 +11,17 @@ ISPCBVHNode *CreateISPCBVHNode(IObject** List, int32 ListSize, ISPCBVHNode* Pare
 	Node->ObjectType = EObjectType::BVH;
 	Node->Left = nullptr;
 	Node->Right = nullptr;
-	Node->Object = nullptr;
 	Node->Obj = nullptr;
 	Node->Parent = Parent;
 
 	if (ListSize == 1)
 	{
-		List[0]->BoundingBox(BeginTime, EndTime, Node->Box);
+		AABB Box;
+		List[0]->BoundingBox(BeginTime, EndTime, Box);
+		Node->Box.Min = Box.Min();
+		Node->Box.Max = Box.Max();
 		Node->Obj = List[0]->GetObject();
 		Node->ObjectType = Node->Obj->Type;
-		Node->Object = List[0];
 	}
 	else if (ListSize == 2)
 	{
@@ -161,7 +162,7 @@ ISPCBVHNode* NearChild(ISPCBVHNode *Current)
 	return Current->Left;
 }
 
-bool ISPCBVH::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
+bool Traverse(ISPCBVHNode* RootNode, const Ray& R, float TMin, float TMax, FHit& Hit)
 {
 	enum class ETraveralState
 	{
@@ -208,7 +209,7 @@ bool ISPCBVH::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 		}
 		case ETraveralState::FromSibling:
 		{
-			if (!Current->Box.Hit(R, TMin, TMax))
+			if (!IntersectBox(Current->Box, R, TMin, TMax))
 			{
 				Current = Parent(Current);
 				State = ETraveralState::FromChild;
@@ -242,7 +243,7 @@ bool ISPCBVH::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 		}
 		case ETraveralState::FromParent:
 		{
-			if (!Current->Box.Hit(R, TMin, TMax))
+			if (!IntersectBox(Current->Box, R, TMin, TMax))
 			{
 				if (Sibling(Current) == nullptr)
 				{
@@ -308,9 +309,14 @@ bool ISPCBVH::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
 	}
 }
 
+bool ISPCBVH::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
+{
+	return Traverse(RootNode, R, TMin, TMax, Hit);
+}
+
 bool ISPCBVH::BoundingBox(float T0, float T1, AABB& B) const
 {
-	B = RootNode->Box;
+	B = AABB(RootNode->Box.Min, RootNode->Box.Max);
 	return true;
 }
 
@@ -331,5 +337,5 @@ void ISPCBVHNode::Debug() const
 	}
 
 	DebugPrint("%s %x Left: %x, Right %x AABB: Min: %.2f,%.2f,%.2f Max: %.2f,%.2f,%.2f \n", ObjectType == EObjectType::BVH ? "ISPCBVHNode" : "Object", this, Left, Right,
-		Box.Min().x, Box.Min().y, Box.Min().z, Box.Max().x, Box.Max().y, Box.Max().z);
+		Box.Min.x, Box.Min.y, Box.Min.z, Box.Max.x, Box.Max.y, Box.Max.z);
 }

@@ -3,21 +3,6 @@
 #include "AABB.h"
 #include "ISPCDefines.h"
 
-struct ISPCBVHNode
-{
-	void Debug() const;
-
-	AABB Box;
-
-	EObjectType ObjectType;
-	Object *Obj;
-	IObject *Object;
-
-	ISPCBVHNode* Parent;
-	ISPCBVHNode* Left;
-	ISPCBVHNode* Right;
-};
-
 struct ISPCBVH : public IObject
 {
 public:

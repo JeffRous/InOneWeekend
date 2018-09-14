@@ -50,3 +50,23 @@ struct Object
 	float Time0, Time1;
 	float Radius;
 };
+
+struct BoundingBox
+{
+	FVector Min;
+	FVector Max;
+};
+
+struct ISPCBVHNode
+{
+	void Debug() const;
+
+	BoundingBox Box;
+
+	EObjectType ObjectType;
+	Object *Obj;
+
+	ISPCBVHNode* Parent;
+	ISPCBVHNode* Left;
+	ISPCBVHNode* Right;
+};
