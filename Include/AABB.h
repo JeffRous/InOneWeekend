@@ -2,7 +2,6 @@
 
 #include "FVector.h"
 #include "Ray.h"
-#include "ISPCDefines.h"
 
 class AABB
 {
@@ -16,9 +15,9 @@ public:
 	bool Hit(const Ray& R, float TMin, float TMax) const;
 
 private:
-	BoundingBox Box;
+	ispc::BoundingBox Box;
 };
 
-bool IntersectBox(const BoundingBox& B, const Ray& R, float TMin, float TMax);
-BoundingBox SurroundingBox(BoundingBox Box0, BoundingBox Box1);
+bool IntersectBox(const ispc::BoundingBox& B, const Ray& R, float TMin, float TMax);
+ispc::BoundingBox SurroundingBox(ispc::BoundingBox Box0, ispc::BoundingBox Box1);
 AABB SurroundingBox(AABB Box0, AABB Box1);

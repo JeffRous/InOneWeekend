@@ -12,11 +12,11 @@
 #include "Material.h"
 #include "BVH.h"
 #include "ISPCBVH.h"
-#include "Raytracing_ispc.h"
+#include "ISPCDefines.h"
 
-#define WIDTH 20
-#define HEIGHT 10
-#define SAMPLES 1
+#define WIDTH 200
+#define HEIGHT 100
+#define SAMPLES 100
 #define PIXEL_COMPONENTS 3
 #define MAX_BOUNCES 50
 
@@ -45,7 +45,7 @@ IObject *RandomWorld()
 	List[0] = new Sphere(FVector(0, -1000, 0), 1000, new Lambertian(Checker));
 
 	int32 i = 1;
-
+	/*
 	for (int32 a = -10; a < 10; a++)
 	{
 		for (int32 b = -10; b < 10; b++)
@@ -76,7 +76,7 @@ IObject *RandomWorld()
 	List[i++] = new Sphere(FVector(0, 1, 0), 1, new Dielectric(1.5f));
 	List[i++] = new Sphere(FVector(-4, 1, 0), 1, new Lambertian(new ConstantTexture(FVector(0.4f, 0.2f, 0.1f))));
 	List[i++] = new Sphere(FVector(4, 1, 0), 1, new Metal(new ConstantTexture(FVector(0.7f, 0.6f, 0.5f)), 0.0f));
-
+	*/
 	//return new ObjectList(List, i);
 	//return new BVHNode(List, i, 0, 1);
 	return new ISPCBVH(List, i, 0, 1);
@@ -180,7 +180,7 @@ int main()
 	uint8 *ImageBuffer = new uint8[WIDTH * HEIGHT * PIXEL_COMPONENTS];
 	uint8 *ImageBufferWriter = ImageBuffer;
 
-	IObject *World = TwoSpheres();
+	IObject *World = RandomWorld();
 	World->Debug();
 
 	FVector Origin(13, 2, 3);
@@ -200,8 +200,8 @@ int main()
 	if (bUseISPC)
 	{
 		ispc::ISPCBVHNode RootNode = *((ispc::ISPCBVHNode*)World->GetObject());
-		//concurrency::parallel_for(int32(0), HEIGHT, [&](int32 j)
-		for (int32 j = 0; j < HEIGHT; j++)
+		concurrency::parallel_for(int32(0), HEIGHT, [&](int32 j)
+		//for (int32 j = 0; j < HEIGHT; j++)
 		{
 			ispc::Ray Rays[SAMPLES];
 			ispc::float3 Pixels[SAMPLES];
@@ -237,7 +237,7 @@ int main()
 				ImageBuffer[PixelToWrite + 1] = uint8(255.99*PixelColor.g);
 				ImageBuffer[PixelToWrite + 2] = uint8(255.99*PixelColor.b);
 			}
-		}//);
+		});
 	}
 	else
 	{

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Ray.h"
-#include "Raytracing_ispc.h"
 
 class FCamera
 {

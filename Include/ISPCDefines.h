@@ -1,7 +1,8 @@
 #pragma once
 
-#include "FVector.h"
+#include "RayTracing_ispc.h"
 
+/* Keep these around if not using ISPC
 enum class EObjectType
 {
 	BVH = 0,
@@ -70,3 +71,4 @@ struct ISPCBVHNode
 
 	//void Debug() const;
 };
+*/

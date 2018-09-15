@@ -11,7 +11,7 @@ struct FHit
 	float T; // Ray parameter
 	FVector P; // 3D Point on ray
 	FVector Normal;
-	const Material *Mat;
+	const ispc::Material *Mat;
 };
 
 class IObject
@@ -20,7 +20,7 @@ public:
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const = 0;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const = 0;
 
-	virtual Object* GetObject() = 0;
+	virtual ispc::Object* GetObject() = 0;
 
 	virtual void Debug() const = 0;
 };
@@ -34,7 +34,7 @@ public:
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
 
-	virtual Object* GetObject() { return nullptr; }
+	virtual ispc::Object* GetObject() { return nullptr; }
 
 	virtual void Debug() const;
 

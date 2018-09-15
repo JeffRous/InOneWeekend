@@ -82,7 +82,7 @@ struct FHit
 	float T; // Ray parameter
 	float3 P; // 3D Point on ray
 	float3 Normal;
-	const Material *Mat;
+	Material *Mat;
 };
 
 struct FCamera
@@ -512,10 +512,10 @@ bool Traverse(ISPCBVHNode* RootNode, const Ray& R, float TMin, float TMax, FHit&
 
 				bHit = RayIntersect(R, Current, TMin, TMax, Hit);
 
-				if(bHit)
-				{
-					print("Hit in FromSibling");
-				}
+				//if(bHit)
+				//{
+				//	print("Hit in FromSibling");
+				//}
 
 				if (bHit && PreviousHit.T < Hit.T)
 				{
@@ -566,10 +566,10 @@ bool Traverse(ISPCBVHNode* RootNode, const Ray& R, float TMin, float TMax, FHit&
 
 				bHit = RayIntersect(R, Current, TMin, TMax, Hit);
 
-				if(bHit)
-				{
-					print("Hit in FromParent");
-				}
+				//if(bHit)
+				//{
+				//	print("Hit in FromParent");
+				//}
 
 				if (bHit && PreviousHit.T < Hit.T)
 				{
@@ -716,7 +716,7 @@ export void GetPixel(uniform ISPCBVHNode &RootNode, uniform Ray Rays[], uniform 
 		float3 PixelColor = assign(0.0f, 0.0f, 0.0f);
 		FHit Hit;
 
-		Ray R = MakeRay(Rays[s].Origin, Rays[s].Direction, Rays[s].Time);
+		Ray R = Rays[s];
 
 		if (Traverse(&RootNode, R, 0.001f, FLT_MAX, Hit))
 		{
@@ -744,6 +744,8 @@ export void GetPixel(uniform ISPCBVHNode &RootNode, uniform Ray Rays[], uniform 
 				SubmitRay = Scattered;
 				Bounces += 1;
 			}
+
+			//print("Traverse Passed! PixelColor= % % %\n", PixelColor.e[0], PixelColor.e[1], PixelColor.e[2]);
 		}
 		else
 		{
@@ -753,7 +755,5 @@ export void GetPixel(uniform ISPCBVHNode &RootNode, uniform Ray Rays[], uniform 
 		}
 
 		Pixels[s] = PixelColor;
-
-		print("PixelColor= % % %\n", PixelColor.e[0], PixelColor.e[1], PixelColor.e[2]);
 	}
 }

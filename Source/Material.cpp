@@ -42,23 +42,23 @@ static bool Refract(const FVector& V, const FVector& N, float NiOverNt, FVector&
 	}
 }
 
-bool MaterialScatter(const Material* Mat, const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered)
+bool MaterialScatter(const ispc::Material* Mat, const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered)
 {
-	if (Mat->Type == EMaterialType::Lambertian)
+	if (Mat->Type == ispc::Lambertian)
 	{
 		FVector Target = Hit.P + Hit.Normal + RandomInUnitSphere();
 		Scattered = Ray(Hit.P, Target - Hit.P, InRay.GetTime());
 		Attenuation = Sample(Mat->Albedo, 0, 0, Hit.P);
 		return true;
 	}
-	else if (Mat->Type == EMaterialType::Metal)
+	else if (Mat->Type == ispc::Metal)
 	{
 		FVector Reflected = Reflect(UnitVector(InRay.GetDirection()), Hit.Normal);
 		Scattered = Ray(Hit.P, Reflected + Mat->Roughness * RandomInUnitSphere(), InRay.GetTime());
 		Attenuation = Sample(Mat->Albedo, 0, 0, Hit.P);
 		return Dot(Scattered.GetDirection(), Hit.Normal) > 0;
 	}
-	else if (Mat->Type == EMaterialType::Dielectric)
+	else if (Mat->Type == ispc::Dielectric)
 	{
 		FVector OutwardNormal;
 		FVector Reflected = Reflect(InRay.GetDirection(), Hit.Normal);

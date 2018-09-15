@@ -5,10 +5,10 @@
 #include "utils/DebugPrint.h"
 #include <algorithm>
 
-ISPCBVHNode *CreateISPCBVHNode(IObject** List, int32 ListSize, ISPCBVHNode* Parent, float BeginTime, float EndTime)
+ispc::ISPCBVHNode *CreateISPCBVHNode(IObject** List, int32 ListSize, ispc::ISPCBVHNode* Parent, float BeginTime, float EndTime)
 {
-	ISPCBVHNode *Node = new ISPCBVHNode;
-	Node->ObjectType = EObjectType::BVH;
+	ispc::ISPCBVHNode *Node = new ispc::ISPCBVHNode;
+	Node->ObjectType = ispc::BVH;
 	Node->Left = nullptr;
 	Node->Right = nullptr;
 	Node->Obj = nullptr;
@@ -84,13 +84,13 @@ ISPCBVH::ISPCBVH(IObject** List, int32 ListSize, float BeginTime, float EndTime)
 	RootNode = CreateISPCBVHNode(List, ListSize, nullptr, BeginTime, EndTime);
 }
 
-FVector GetCenterAt(ISPCBVHNode *Node, float Time)
+FVector GetCenterAt(ispc::ISPCBVHNode *Node, float Time)
 {
-	if (Node->Obj->Type == EObjectType::Sphere)
+	if (Node->Obj->Type == ispc::Sphere)
 	{
 		return Node->Obj->Center0;
 	}
-	else if (Node->Obj->Type == EObjectType::MovingSphere)
+	else if (Node->Obj->Type == ispc::MovingSphere)
 	{
 		return Node->Obj->Center0 + ((Time - Node->Obj->Time0) / (Node->Obj->Time1 - Node->Obj->Time0)) * (Node->Obj->Center1 - Node->Obj->Center0);
 	}
@@ -98,7 +98,7 @@ FVector GetCenterAt(ISPCBVHNode *Node, float Time)
 	return FVector(0, 0, 0);
 }
 
-bool RayIntersect(const Ray& R, ISPCBVHNode *Node, float TMin, float TMax, FHit& Hit)
+bool RayIntersect(const Ray& R, ispc::ISPCBVHNode *Node, float TMin, float TMax, FHit& Hit)
 {
 	FVector GetCenterAtTime = GetCenterAt(Node, R.GetTime());
 	FVector RayDirection = R.GetDirection();
@@ -142,7 +142,7 @@ bool RayIntersect(const Ray& R, ISPCBVHNode *Node, float TMin, float TMax, FHit&
 	//return Node->Object->Hit(R, TMin, TMax, Hit);
 }
 
-ISPCBVHNode* Sibling(ISPCBVHNode *Current)
+ispc::ISPCBVHNode* Sibling(ispc::ISPCBVHNode *Current)
 {
 	if (Current->Parent == nullptr)
 	{
@@ -152,17 +152,17 @@ ISPCBVHNode* Sibling(ISPCBVHNode *Current)
 	return Current->Parent->Right;
 }
 
-ISPCBVHNode* Parent(ISPCBVHNode *Current)
+ispc::ISPCBVHNode* Parent(ispc::ISPCBVHNode *Current)
 {
 	return Current->Parent;
 }
 
-ISPCBVHNode* NearChild(ISPCBVHNode *Current)
+ispc::ISPCBVHNode* NearChild(ispc::ISPCBVHNode *Current)
 {
 	return Current->Left;
 }
 
-bool Traverse(ISPCBVHNode* RootNode, const Ray& R, float TMin, float TMax, FHit& Hit)
+bool Traverse(ispc::ISPCBVHNode* RootNode, const Ray& R, float TMin, float TMax, FHit& Hit)
 {
 	enum class ETraveralState
 	{
@@ -173,7 +173,7 @@ bool Traverse(ISPCBVHNode* RootNode, const Ray& R, float TMin, float TMax, FHit&
 
 	Hit.T = FLT_MAX;
 
-	ISPCBVHNode *Current = RootNode;
+	ispc::ISPCBVHNode *Current = RootNode;
 	ETraveralState State = ETraveralState::FromParent;
 
 	bool bHit = false;
@@ -214,7 +214,7 @@ bool Traverse(ISPCBVHNode* RootNode, const Ray& R, float TMin, float TMax, FHit&
 				Current = Parent(Current);
 				State = ETraveralState::FromChild;
 			}
-			else if (Current->ObjectType != EObjectType::BVH)
+			else if (Current->ObjectType != ispc::BVH)
 			{
 				FHit PreviousHit = Hit;
 				bool bPreviouslyHit = bHit;
@@ -263,7 +263,7 @@ bool Traverse(ISPCBVHNode* RootNode, const Ray& R, float TMin, float TMax, FHit&
 					State = ETraveralState::FromSibling;
 				}
 			}
-			else if (Current->ObjectType != EObjectType::BVH)
+			else if (Current->ObjectType != ispc::BVH)
 			{
 				FHit PreviousHit = Hit;
 				bool bPreviouslyHit = bHit;

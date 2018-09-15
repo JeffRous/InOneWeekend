@@ -2,7 +2,6 @@
 
 #include "Object.h"
 #include "Material.h"
-#include "ISPCDefines.h"
 
 class Sphere : public IObject
 {
@@ -15,19 +14,19 @@ public:
 		Obj.Time0 = 0;
 		Obj.Time1 = 0;
 		Obj.Radius = InRadius;
-		Obj.Type = EObjectType::Sphere;
+		Obj.Type = ispc::Sphere;
 		Obj.Mat = *InMaterial->GetMaterial();
 	}
 
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
 
-	virtual Object* GetObject() { return &Obj; }
+	virtual ispc::Object* GetObject() { return &Obj; }
 
 	virtual void Debug() const;
 
 private:
-	Object Obj;
+	ispc::Object Obj;
 };
 
 class MovingSphere : public IObject
@@ -41,19 +40,19 @@ public:
 		Obj.Time0 = InTime0;
 		Obj.Time1 = InTime1;
 		Obj.Radius = InRadius;
-		Obj.Type = EObjectType::MovingSphere;
+		Obj.Type = ispc::MovingSphere;
 		Obj.Mat = *InMaterial->GetMaterial();
 	}
 
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
 
-	virtual Object* GetObject() { return &Obj; }
+	virtual ispc::Object* GetObject() { return &Obj; }
 
 	virtual void Debug() const;
 
 	FVector GetCenterAt(float Time) const;
 
 private:
-	Object Obj;
+	ispc::Object Obj;
 };

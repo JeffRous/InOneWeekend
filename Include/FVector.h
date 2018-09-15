@@ -2,7 +2,7 @@
 
 #include <math.h>
 #include "utils/Types.h"
-#include "Raytracing_ispc.h"
+#include "ISPCDefines.h"
 
 class FVector
 {
