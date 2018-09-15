@@ -19,7 +19,7 @@ enum class EMaterialType
 
 enum class ETextureType
 {
-	None = 0,
+	No = 0,
 	Constant,
 	Checker
 };
@@ -59,8 +59,6 @@ struct BoundingBox
 
 struct ISPCBVHNode
 {
-	void Debug() const;
-
 	BoundingBox Box;
 
 	EObjectType ObjectType;
@@ -69,4 +67,6 @@ struct ISPCBVHNode
 	ISPCBVHNode* Parent;
 	ISPCBVHNode* Left;
 	ISPCBVHNode* Right;
+
+	//void Debug() const;
 };

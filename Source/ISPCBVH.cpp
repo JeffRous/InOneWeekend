@@ -322,9 +322,9 @@ bool ISPCBVH::BoundingBox(float T0, float T1, AABB& B) const
 
 void ISPCBVH::Debug() const
 {
-	RootNode->Debug();
+	//RootNode->Debug();
 }
-
+/*
 void ISPCBVHNode::Debug() const
 {
 	if (Left)
@@ -338,4 +338,4 @@ void ISPCBVHNode::Debug() const
 
 	DebugPrint("%s %x Left: %x, Right %x AABB: Min: %.2f,%.2f,%.2f Max: %.2f,%.2f,%.2f \n", ObjectType == EObjectType::BVH ? "ISPCBVHNode" : "Object", this, Left, Right,
 		Box.Min.x, Box.Min.y, Box.Min.z, Box.Max.x, Box.Max.y, Box.Max.z);
-}
+}*/
