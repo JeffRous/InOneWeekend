@@ -48,7 +48,7 @@ bool Sphere::BoundingBox(float T0, float T1, AABB& Box) const
 
 void Sphere::Debug() const
 {
-	DebugPrint("Sphere %x Center: %.2f,%.2f,%.2f Radius: %.2f\n", this, Obj.Center0.e[0], Obj.Center0.e[1], Obj.Center0.e[2], Obj.Radius);
+	DebugPrint(L"Sphere %x Center: %.2f,%.2f,%.2f Radius: %.2f\n", this, Obj.Center0.e[0], Obj.Center0.e[1], Obj.Center0.e[2], Obj.Radius);
 }
 
 bool MovingSphere::Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const
@@ -111,6 +111,6 @@ FVector MovingSphere::GetCenterAt(float Time) const
 
 void MovingSphere::Debug() const
 {
-	DebugPrint("MovingSphere %x Center0: %.2f,%.2f,%.2f Center1: %.2f,%.2f,%.2f Time0: %.2f Time1: %.2f Radius: %.2f\n",
+	DebugPrint(L"MovingSphere %x Center0: %.2f,%.2f,%.2f Center1: %.2f,%.2f,%.2f Time0: %.2f Time1: %.2f Radius: %.2f\n",
 		this, Obj.Center0.e[0], Obj.Center0.e[1], Obj.Center0.e[2], Obj.Center1.e[0], Obj.Center1.e[1], Obj.Center1.e[2], Obj.Time0, Obj.Time1, Obj.Radius);
 }

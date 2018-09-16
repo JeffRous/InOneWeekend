@@ -52,7 +52,7 @@ ISPCBVH::ISPCBVH(IObject** List, int32 ListSize, float BeginTime, float EndTime)
 
 		if (!AHit->BoundingBox(0, 0, BoxL) || !BHit->BoundingBox(0, 0, BoxR))
 		{
-			DebugPrint("No Bounding Box in BVHNode Constructor");
+			DebugPrint(L"No Bounding Box in BVHNode Constructor");
 		}
 
 		bool ReturnValue = false;
@@ -336,6 +336,6 @@ void ISPCBVHNode::Debug() const
 		Right->Debug();
 	}
 
-	DebugPrint("%s %x Left: %x, Right %x AABB: Min: %.2f,%.2f,%.2f Max: %.2f,%.2f,%.2f \n", ObjectType == EObjectType::BVH ? "ISPCBVHNode" : "Object", this, Left, Right,
+	DebugPrint(L"%s %x Left: %x, Right %x AABB: Min: %.2f,%.2f,%.2f Max: %.2f,%.2f,%.2f \n", ObjectType == EObjectType::BVH ? "ISPCBVHNode" : "Object", this, Left, Right,
 		Box.Min.x, Box.Min.y, Box.Min.z, Box.Max.x, Box.Max.y, Box.Max.z);
 }*/

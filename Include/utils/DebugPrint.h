@@ -1,3 +1,3 @@
 #pragma once
 
-void DebugPrint(const char *format, ...);
+void DebugPrint(const wchar_t *format, ...);

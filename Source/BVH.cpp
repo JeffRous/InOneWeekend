@@ -13,7 +13,7 @@ BVHNode::BVHNode(IObject** List, int32 ListSize, float BeginTime, float EndTime)
 
 		if (!AHit->BoundingBox(0, 0, BoxL) || !BHit->BoundingBox(0, 0, BoxR))
 		{
-			DebugPrint("No Bounding Box in BVHNode Constructor");
+			DebugPrint(L"No Bounding Box in BVHNode Constructor");
 		}
 
 		bool ReturnValue = false;
@@ -61,7 +61,7 @@ BVHNode::BVHNode(IObject** List, int32 ListSize, float BeginTime, float EndTime)
 
 	if (!Left->BoundingBox(BeginTime, EndTime, BoxLeft) || !Right->BoundingBox(BeginTime, EndTime, BoxRight))
 	{
-		DebugPrint("No Bounding Box in BVHNode Constructor");
+		DebugPrint(L"No Bounding Box in BVHNode Constructor");
 	}
 
 	Box = SurroundingBox(BoxLeft, BoxRight);
@@ -117,6 +117,6 @@ void BVHNode::Debug() const
 {
 	Left->Debug();
 	Right->Debug();
-	DebugPrint("BVHNode %x Left: %x, Right %x AABB: Min: %.2f,%.2f,%.2f Max: %.2f,%.2f,%.2f \n", this, Left, Right,
+	DebugPrint(L"BVHNode %x Left: %x, Right %x AABB: Min: %.2f,%.2f,%.2f Max: %.2f,%.2f,%.2f \n", this, Left, Right,
 		Box.Min().x, Box.Min().y, Box.Min().z, Box.Max().x, Box.Max().y, Box.Max().z);
 }

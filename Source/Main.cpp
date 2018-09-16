@@ -274,7 +274,7 @@ int main()
 	double Elapsed = t.Stop();
 
 	ImageFileWriter::WriteImage("output.png", ImageWriterType::PNG, WIDTH, HEIGHT, PIXEL_COMPONENTS, ImageBuffer);
-	DebugPrint("Ray traversal time: %lf s \n", Elapsed/1000.0);
+	DebugPrint(L"Ray traversal time: %lf s \n", Elapsed/1000.0);
 
 	delete World;
 

@@ -57,7 +57,7 @@ bool ObjectList::BoundingBox(float T0, float T1, AABB& Box) const
 
 void ObjectList::Debug() const
 {
-	DebugPrint("ObjectList %x ListSize: %d\n", this, ListSize);
+	DebugPrint(L"ObjectList %x ListSize: %d\n", this, ListSize);
 
 	for (int32 i = 0; i < ListSize; i++)
 	{
