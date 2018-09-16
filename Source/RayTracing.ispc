@@ -2,6 +2,7 @@
 
 #define FLT_MAX          3.402823466e+38F        // max value
 #define MAX_BOUNCES 50
+#define MAX_BVH_DEPTH 64
 
 static RNGState rngstate;
 
@@ -240,6 +241,15 @@ inline float3 assign(float x, float y, float z)
 	return ret;
 }
 
+inline uniform float3 assign(uniform float x, uniform float y, uniform float z)
+{
+	uniform float3 ret;
+	ret.e[0] = x;
+	ret.e[1] = y;
+	ret.e[2] = z;
+	return ret;
+}
+
 inline float Length(float3 v)
 {
 	return sqrt(v.e[0] * v.e[0] + v.e[1] * v.e[1] + v.e[2] * v.e[2]);
@@ -323,39 +333,46 @@ export void GetRays(uniform Ray Rays[], uniform FCamera &Camera, uniform int Sam
 	}
 }
 
-bool IntersectBox(const BoundingBox* B, const Ray& R, float TMin, float TMax)
+bool IntersectBox(const uniform BoundingBox* uniform B, const Ray& R, float TMin, float TMax)
 {
-	float3 Direction = R.Direction;
-	float3 Origin = R.Origin;
+	float3 InvD = 1.0f / R.Direction;
+	float3 T0 = (B->Min - R.Origin) * InvD;
+	float3 T1 = (B->Max - R.Origin) * InvD;
 
-	for (int32 i = 0; i < 3; i++)
+	if(InvD.e[0] < 0.0f)
 	{
-		float InvD = 1.0f / Direction.e[i];
-		float T0 = (B->Min.e[i] - Origin.e[i]) * InvD;
-		float T1 = (B->Max.e[i] - Origin.e[i]) * InvD;
-
-		if (InvD < 0.0f)
-		{
-			swap(T0, T1);
-		}
-
-		TMin = T0 > TMin ? T0 : TMin;
-		TMax = T1 < TMax ? T1 : TMax;
-
-		if (TMax <= TMin)
-		{
-			return false;
-		}
+		swap(T0.e[0], T1.e[0]);
 	}
 
-	return true;
+	TMin = max(T0.e[0], TMin);
+	TMax = min(T1.e[0], TMax);
+
+	if(InvD.e[1] < 0.0f)
+	{
+		swap(T0.e[1], T1.e[1]);
+	}
+
+	TMin = max(T0.e[1], TMin);
+	TMax = min(T1.e[1], TMax);
+
+	if(InvD.e[2] < 0.0f)
+	{
+		swap(T0.e[2], T1.e[2]);
+	}
+
+	TMin = max(T0.e[2], TMin);
+	TMax = min(T1.e[2], TMax);
+
+	return (TMin <= TMax);
 }
 
 float3 Sample(const Texture* T, const float3& p)
 {
+	float3 RetVal;
+
 	if (T->Type == Constant)
 	{
-		return T->Color;
+		RetVal = T->Color;
 	}
 	else if (T->Type == Checker)
 	{
@@ -363,35 +380,45 @@ float3 Sample(const Texture* T, const float3& p)
 
 		if (Sines < 0)
 		{
-			return T->ColorOdd;
+			RetVal = T->ColorOdd;
 		}
 		else
 		{
-			return T->ColorEven;
+			RetVal = T->ColorEven;
 		}
 	}
 	else
 	{
-		return assign(0,0,0);
+		RetVal = assign(0,0,0);
 	}
+
+	return RetVal;
 }
 
 float3 GetCenterAt(ISPCBVHNode *Node, float Time)
 {
+	float3 RetVal;
+
 	if (Node->Obj->Type == Sphere)
 	{
-		return Node->Obj->Center0;
+		RetVal = Node->Obj->Center0;
 	}
 	else if (Node->Obj->Type == MovingSphere)
 	{
-		return Node->Obj->Center0 + ((Time - Node->Obj->Time0) / (Node->Obj->Time1 - Node->Obj->Time0)) * (Node->Obj->Center1 - Node->Obj->Center0);
+		RetVal = Node->Obj->Center0 + ((Time - Node->Obj->Time0) / (Node->Obj->Time1 - Node->Obj->Time0)) * (Node->Obj->Center1 - Node->Obj->Center0);
+	}
+	else
+	{
+		RetVal = assign(0,0,0);
 	}
 
-	return assign(0,0,0);
+	return RetVal;
 }
 
 bool RayIntersect(const Ray& R, ISPCBVHNode *Node, float TMin, float TMax, FHit& Hit)
 {
+	bool RetVal = false;
+
 	float3 GetCenterAtTime = GetCenterAt(Node, R.Time);
 	float3 Oc = R.Origin - GetCenterAtTime;
 
@@ -412,202 +439,96 @@ bool RayIntersect(const Ray& R, ISPCBVHNode *Node, float TMin, float TMax, FHit&
 			Hit.Normal = (Hit.P - GetCenterAtTime) / Node->Obj->Radius;
 			Hit.Mat = &Node->Obj->Mat;
 
-			return true;
+			RetVal = true;
 		}
 
-		Temp = (-b + DiscSqrt) / a;
-
-		if (Temp < TMax && Temp > TMin)
+		if(!RetVal)
 		{
-			Hit.T = Temp;
-			Hit.P = R.Origin + Temp * R.Direction;
-			Hit.Normal = (Hit.P - GetCenterAtTime) / Node->Obj->Radius;
-			Hit.Mat = &Node->Obj->Mat;
+			Temp = (-b + DiscSqrt) / a;
 
-			return true;
+			if (Temp < TMax && Temp > TMin)
+			{
+				Hit.T = Temp;
+				Hit.P = R.Origin + Temp * R.Direction;
+				Hit.Normal = (Hit.P - GetCenterAtTime) / Node->Obj->Radius;
+				Hit.Mat = &Node->Obj->Mat;
+
+				RetVal = true;
+			}
 		}
 	}
 
-	return false;
+	return RetVal;
 }
 
-ISPCBVHNode* Sibling(ISPCBVHNode *Current)
-{
-	ISPCBVHNode *Parent = Current->Parent;
-
-	if (Parent == 0)
-	{
-		return 0;
-	}
-
-	return Parent->Right;
-}
-
-ISPCBVHNode* Parent(ISPCBVHNode *Current)
-{
-	return Current->Parent;
-}
-
-ISPCBVHNode* NearChild(ISPCBVHNode *Current)
+inline uniform ISPCBVHNode* uniform NearChild(uniform ISPCBVHNode * uniform Current)
 {
 	return Current->Left;
 }
 
-bool Traverse(ISPCBVHNode* RootNode, const Ray& R, float TMin, float TMax, FHit& Hit)
+inline uniform ISPCBVHNode* uniform FarChild(uniform ISPCBVHNode * uniform Current)
 {
-	enum ETraveralState
-	{
-		FromParent = 0,
-		FromChild,
-		FromSibling
-	};
+	return Current->Right;
+}
+
+bool Traverse(uniform ISPCBVHNode* uniform RootNode, const Ray& R, float TMin, float TMax, FHit& Hit)
+{
+	bool bHit = false;
+	// Follow ray through BVH nodes to find primitive intersections
+	uniform int TodoOffset = 0;
+	uniform ISPCBVHNode* uniform Todo[MAX_BVH_DEPTH];
+
+	uniform ISPCBVHNode* uniform Current = RootNode;
 
 	Hit.T = FLT_MAX;
 
-	ISPCBVHNode *Current = RootNode;
-	ETraveralState State = FromParent;
-
-	bool bHit = false;
-
 	while (true)
 	{
-		switch (State)
+		// Check ray against BVH node
+
+		const uniform BoundingBox* uniform B = &Current->Box;
+		if (any(IntersectBox(B, R, TMin, TMax)))
 		{
-		case FromChild:
-		{
-			if (Current == RootNode)
-			{
-				if (bHit)
-				{
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
-			if (Current == NearChild(Parent(Current)))
-			{
-				Current = Sibling(Current);
-				State = FromSibling;
-			}
-			else
-			{
-				Current = Parent(Current);
-				State = FromChild;
-			}
-			break;
-		}
-		case FromSibling:
-		{
-			if (!IntersectBox(&Current->Box, R, TMin, TMax))
-			{
-				Current = Parent(Current);
-				State = FromChild;
-			}
-			else if (Current->ObjectType != BVH)
+			if (Current->ObjectType != BVH)
 			{
 				FHit PreviousHit = Hit;
-				bool bPreviouslyHit = bHit;
+				bool bHitRay = RayIntersect(R, Current, TMin, TMax, Hit);
 
-				bHit = RayIntersect(R, Current, TMin, TMax, Hit);
-
-				//if(bHit)
-				//{
-				//	print("Hit in FromSibling");
-				//}
-
-				if (bHit && PreviousHit.T < Hit.T)
-				{
-					Hit = PreviousHit;
-				}
-
-				if (bPreviouslyHit && !bHit)
+				if(bHitRay)
 				{
 					bHit = true;
+
+					if(PreviousHit.T < Hit.T)
+					{
+						Hit = PreviousHit;
+					}
 				}
 
-				Current = Parent(Current);
-				State = FromChild;
+				if (TodoOffset == 0)
+				{
+					break;
+				}
+
+				Current = Todo[--TodoOffset];
 			}
 			else
 			{
+				// Put far BVH node on _todo_ stack, advance to near node
+				Todo[TodoOffset++] = FarChild(Current);
 				Current = NearChild(Current);
-				State = FromParent;
 			}
-			break;
 		}
-		case FromParent:
+		else
 		{
-			if (!IntersectBox(&Current->Box, R, TMin, TMax))
+			if (TodoOffset == 0)
 			{
-				if (Sibling(Current) == 0)
-				{
-					if (Parent(Current) == 0)
-					{
-						State = FromChild;
-					}
-					else
-					{
-						Current = Parent(Current);
-						State = FromChild;
-					}
-				}
-				else
-				{
-					Current = Sibling(Current);
-					State = FromSibling;
-				}
+				break;
 			}
-			else if (Current->ObjectType != BVH)
-			{
-				FHit PreviousHit = Hit;
-				bool bPreviouslyHit = bHit;
-
-				bHit = RayIntersect(R, Current, TMin, TMax, Hit);
-
-				//if(bHit)
-				//{
-				//	print("Hit in FromParent");
-				//}
-
-				if (bHit && PreviousHit.T < Hit.T)
-				{
-					Hit = PreviousHit;
-				}
-
-				if (bPreviouslyHit && !bHit)
-				{
-					bHit = true;
-				}
-
-				if (Sibling(Current) == 0)
-				{
-					if (Parent(Current) == 0)
-					{
-						State = FromChild;
-					}
-					else
-					{
-						Current = Parent(Current);
-						State = FromChild;
-					}
-				}
-				else
-				{
-					Current = Sibling(Current);
-					State = FromSibling;
-				}
-			}
-			else
-			{
-				Current = NearChild(Current);
-				State = FromParent;
-			}
-			break;
-		}
+			Current = Todo[--TodoOffset];
 		}
 	}
+
+	return bHit;
 }
 
 static float3 Reflect(const float3& V, const float3& N)
@@ -641,19 +562,21 @@ static bool Refract(const float3& V, const float3& N, float NiOverNt, float3& Re
 
 bool MaterialScatter(const Material* Mat, const Ray& InRay, const FHit& Hit, float3& Attenuation, Ray& Scattered)
 {
+	bool RetVal = false;
+
 	if (Mat->Type == Lambertian)
 	{
 		float3 Target = Hit.P + Hit.Normal + RandomInUnitSphere();
 		Scattered = MakeRay(Hit.P, Target - Hit.P, InRay.Time);
 		Attenuation = Sample(&Mat->Albedo, Hit.P);
-		return true;
+		RetVal = true;
 	}
 	else if (Mat->Type == Metal)
 	{
 		float3 Reflected = Reflect(UnitVector(InRay.Direction), Hit.Normal);
 		Scattered = MakeRay(Hit.P, Reflected + Mat->Roughness * RandomInUnitSphere(), InRay.Time);
 		Attenuation = Sample(&Mat->Albedo, Hit.P);
-		return dot(Scattered.Direction, Hit.Normal) > 0;
+		RetVal = dot(Scattered.Direction, Hit.Normal) > 0;
 	}
 	else if (Mat->Type == Dielectric)
 	{
@@ -698,18 +621,18 @@ bool MaterialScatter(const Material* Mat, const Ray& InRay, const FHit& Hit, flo
 			Scattered = MakeRay(Hit.P, Refracted, InRay.Time);
 		}
 
-		return true;
+		RetVal = true;
 	}
 
-	return false;
+	return RetVal;
 }
 
-export void GetPixel(uniform ISPCBVHNode &RootNode, uniform Ray Rays[], uniform float3 Pixels[], uniform int Samples, uniform int i, uniform int Width, uniform int j, uniform int Height)
+export void GetPixel(uniform ISPCBVHNode * uniform RootNode, uniform Ray Rays[], uniform float3 Pixels[], uniform int Samples, uniform int i, uniform int Width, uniform int j, uniform int Height)
 {
 	seed_rng(&rngstate, programIndex + (i << (programIndex & 15)));
 
-	const float3 StartColor = assign(1.0f, 1.0f, 1.0f);
-	const float3 EndColor = assign(0.5f, 0.7f, 1.0f);
+	const uniform float3 StartColor = assign(1.0f, 1.0f, 1.0f);
+	const uniform float3 EndColor = assign(0.5f, 0.7f, 1.0f);
 
 	foreach(s = 0 ... Samples)
 	{
@@ -718,7 +641,7 @@ export void GetPixel(uniform ISPCBVHNode &RootNode, uniform Ray Rays[], uniform 
 
 		Ray R = Rays[s];
 
-		if (Traverse(&RootNode, R, 0.001f, FLT_MAX, Hit))
+		if (Traverse(RootNode, R, 0.001f, FLT_MAX, Hit))
 		{
 			float3 Attenuation;
 			Ray Scattered;
@@ -726,17 +649,17 @@ export void GetPixel(uniform ISPCBVHNode &RootNode, uniform Ray Rays[], uniform 
 			varying Ray SubmitRay = R;
 			float3 Sum = assign(1,1,1);
 
-			int Bounces = 0;
+			uniform int Bounces = 0;
 
 			while (Bounces < MAX_BOUNCES && MaterialScatter(Hit.Mat, SubmitRay, Hit, Attenuation, Scattered))
 			{
 				Sum = Sum * Attenuation;
 
-				if (!Traverse(&RootNode, Scattered, 0.001f, FLT_MAX, Hit))
+				if (!Traverse(RootNode, Scattered, 0.001f, FLT_MAX, Hit))
 				{
 					float3 UnitDirection = UnitVector(Scattered.Direction);
 					float t = 0.5f * (UnitDirection.e[1] + 1.0f);
-					Sum = Sum * (1.0f - t) * StartColor + t * EndColor;
+					Sum = Sum * ((1.0f - t) * StartColor + t * EndColor);
 					PixelColor = PixelColor + Sum;
 					break;
 				}
@@ -744,14 +667,12 @@ export void GetPixel(uniform ISPCBVHNode &RootNode, uniform Ray Rays[], uniform 
 				SubmitRay = Scattered;
 				Bounces += 1;
 			}
-
-			//print("Traverse Passed! PixelColor= % % %\n", PixelColor.e[0], PixelColor.e[1], PixelColor.e[2]);
 		}
 		else
 		{
 			float3 UnitDirection = UnitVector(R.Direction);
 			float t = 0.5f * (UnitDirection.e[1] + 1.0f);
-			PixelColor = PixelColor + (1.0f - t) * StartColor + t * EndColor;
+			PixelColor = PixelColor + ((1.0f - t) * StartColor + t * EndColor);
 		}
 
 		Pixels[s] = PixelColor;

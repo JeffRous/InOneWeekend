@@ -45,7 +45,7 @@ IObject *RandomWorld()
 	List[0] = new Sphere(FVector(0, -1000, 0), 1000, new Lambertian(Checker));
 
 	int32 i = 1;
-	/*
+
 	for (int32 a = -10; a < 10; a++)
 	{
 		for (int32 b = -10; b < 10; b++)
@@ -76,7 +76,7 @@ IObject *RandomWorld()
 	List[i++] = new Sphere(FVector(0, 1, 0), 1, new Dielectric(1.5f));
 	List[i++] = new Sphere(FVector(-4, 1, 0), 1, new Lambertian(new ConstantTexture(FVector(0.4f, 0.2f, 0.1f))));
 	List[i++] = new Sphere(FVector(4, 1, 0), 1, new Metal(new ConstantTexture(FVector(0.7f, 0.6f, 0.5f)), 0.0f));
-	*/
+
 	//return new ObjectList(List, i);
 	//return new BVHNode(List, i, 0, 1);
 	return new ISPCBVH(List, i, 0, 1);
@@ -199,7 +199,7 @@ int main()
 
 	if (bUseISPC)
 	{
-		ispc::ISPCBVHNode RootNode = *((ispc::ISPCBVHNode*)World->GetObject());
+		ispc::ISPCBVHNode* RootNode = (ispc::ISPCBVHNode*)World->GetObject();
 		concurrency::parallel_for(int32(0), HEIGHT, [&](int32 j)
 		//for (int32 j = 0; j < HEIGHT; j++)
 		{
