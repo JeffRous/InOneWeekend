@@ -28,6 +28,7 @@
     <ClInclude Include="Include\Material.h" />
     <ClInclude Include="Include\Object.h" />
     <ClInclude Include="Include\Ray.h" />
+    <ClInclude Include="Include\RayTracing_ispc.h" />
     <ClInclude Include="Include\Sphere.h" />
     <ClInclude Include="Include\Texture.h" />
     <ClInclude Include="Include\utils\DebugPrint.h" />
@@ -56,14 +57,18 @@
   <ItemGroup>
     <CustomBuild Include="Source\RayTracing.ispc">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)ThirdParty\ispc\ispc -O2 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=sse4,avx2 --opt=fast-math</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)ThirdParty\ispc\ispc -O0 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=sse4,avx2 -g --opt=fast-math</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)ThirdParty\ispc\ispc -O2 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=sse4,avx2 --opt=fast-math</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)ThirdParty\ispc\ispc -O2 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=sse4,avx2 --opt=fast-math</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)ThirdParty\ispc\ispc -O0 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=sse4,avx2 -g --opt=fast-math</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)ThirdParty\ispc\ispc -O2 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=sse4,avx2 --opt=fast-math</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename).obj;$(IntDir)%(Filename)_sse4.obj;$(IntDir)%(Filename)_avx2.obj</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename).obj;$(IntDir)%(Filename)_sse4.obj;$(IntDir)%(Filename)_avx2.obj</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;$(IntDir)%(Filename)_sse4.obj;$(IntDir)%(Filename)_avx2.obj</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;$(IntDir)%(Filename)_sse4.obj;$(IntDir)%(Filename)_avx2.obj</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</TreatOutputAsContent>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</TreatOutputAsContent>
     </CustomBuild>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -128,6 +133,9 @@
       <FloatingPointExceptions>true</FloatingPointExceptions>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -140,6 +148,9 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -161,6 +172,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -183,6 +195,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
