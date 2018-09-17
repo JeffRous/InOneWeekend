@@ -1,5 +1,3 @@
-//typedef float<3> float3;
-
 #define FLT_MAX          3.402823466e+38F        // max value
 #define MAX_BOUNCES 50
 #define MAX_BVH_DEPTH 64
@@ -106,7 +104,7 @@ struct Ray
 
 static void swap(float& a, float& b)
 {
-    int t = a;
+    float t = a;
     a = b; b = t;
 }
 
@@ -592,7 +590,7 @@ bool MaterialScatter(const Material* Mat, const Ray& InRay, const FHit& Hit, flo
 
 		if (RayDirectionDotNormal > 0)
 		{
-			OutwardNormal = assign(-Hit.Normal.e[0], -Hit.Normal.e[1], -Hit.Normal.e[2]);
+			OutwardNormal = Hit.Normal * -1.0f;
 			NiOverNt = Mat->Ri;
 			Cosine = Mat->Ri * RayDirectionDotNormal / Length(InRay.Direction);
 		}
