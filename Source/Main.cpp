@@ -193,6 +193,7 @@ int main()
 	float BeginTime = 0.0f;
 	float EndTime = 1.0f;
 	FCamera Camera(Origin, LookAt, Up, Fov, AspectRatio, Aperture, DistanceToFocus, BeginTime, EndTime);
+	ispc::FCamera ISPCCamera = Camera.GetISPCCamera();
 
 	Timer t;
 	t.Start();
@@ -204,30 +205,24 @@ int main()
 		//for (int32 j = 0; j < HEIGHT; j++)
 		{
 			ispc::Ray Rays[SAMPLES];
-			ispc::float3 Pixels[SAMPLES];
 
 			for (int32 i = 0; i < WIDTH; i++)
 			{
-				ispc::FCamera ISPCCamera = Camera.GetISPCCamera();
-
-				ispc::GetRays(Rays, ISPCCamera, SAMPLES, i, WIDTH, j, HEIGHT);
-
 				FVector PixelColor = FVector(0, 0, 0);
 
 				if (bUseISPCTraversal)
 				{
-					ispc::GetPixel(RootNode, Rays, Pixels, SAMPLES, i, WIDTH, j, HEIGHT);
+					ispc::float3 Pixel;
+					ispc::GetPixel(RootNode, ISPCCamera, Pixel, SAMPLES, i, WIDTH, j, HEIGHT);
 
-					for (int32 s = 0; s < SAMPLES; s++)
-					{
-						PixelColor += Pixels[s];
-					}
+					PixelColor = Pixel;
 
 					PixelColor /= float(SAMPLES);
 					PixelColor = FVector(sqrtf(PixelColor.r), sqrtf(PixelColor.g), sqrtf(PixelColor.b));
 				}
 				else
 				{
+					ispc::GetRays(Rays, ISPCCamera, SAMPLES, i, WIDTH, j, HEIGHT);
 					PixelColor = GetPixel(World, Rays);
 				}
 

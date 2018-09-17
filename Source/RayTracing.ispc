@@ -102,10 +102,11 @@ struct Ray
 	float Time;
 };
 
-static void swap(float& a, float& b)
+static inline void swap(float& a, float& b)
 {
-    float t = a;
-    a = b; b = t;
+	float t = a;
+	a = b;
+	b = t;
 }
 
 static inline float dot(float3 v1, float3 v2)
@@ -277,16 +278,6 @@ static inline float drand48()
 	return frandom(&rngstate);
 }
 
-export void Random(uniform float Randoms[], uniform unsigned int NumRandoms)
-{
-	seed_rng(&rngstate, programIndex + (NumRandoms << (programIndex & 15)));
-
-	foreach(i = 0 ... NumRandoms)
-	{
-		Randoms[i] = frandom(&rngstate);
-	}
-}
-
 static inline float3 RandomInUnitDisk()
 {
 	float3 P;
@@ -393,7 +384,7 @@ float3 Sample(const Texture* T, const float3& p)
 	return RetVal;
 }
 
-float3 GetCenterAt(ISPCBVHNode *Node, float Time)
+float3 GetCenterAt(uniform ISPCBVHNode * uniform Node, float Time)
 {
 	float3 RetVal;
 
@@ -413,7 +404,7 @@ float3 GetCenterAt(ISPCBVHNode *Node, float Time)
 	return RetVal;
 }
 
-bool RayIntersect(const Ray& R, ISPCBVHNode *Node, float TMin, float TMax, FHit& Hit)
+bool RayIntersect(const Ray& R, uniform ISPCBVHNode* uniform Node, float TMin, float TMax, FHit& Hit)
 {
 	bool RetVal = false;
 
@@ -625,19 +616,29 @@ bool MaterialScatter(const Material* Mat, const Ray& InRay, const FHit& Hit, flo
 	return RetVal;
 }
 
-export void GetPixel(uniform ISPCBVHNode * uniform RootNode, uniform Ray Rays[], uniform float3 Pixels[], uniform int Samples, uniform int i, uniform int Width, uniform int j, uniform int Height)
+export void GetPixel(uniform ISPCBVHNode* uniform RootNode, uniform FCamera &Camera, uniform float3& Pixel, uniform int Samples, uniform int i, uniform int Width, uniform int j, uniform int Height)
 {
 	seed_rng(&rngstate, programIndex + (i << (programIndex & 15)));
 
 	const uniform float3 StartColor = assign(1.0f, 1.0f, 1.0f);
 	const uniform float3 EndColor = assign(0.5f, 0.7f, 1.0f);
+	float3 FinalColor = assign(0.0f, 0.0f, 0.0f);
 
 	foreach(s = 0 ... Samples)
 	{
+		float u = (i + drand48()) / Width;
+		float v = (j + drand48()) / Height;
+
+		float3 RandomPointOnLens = RandomInUnitDisk() * Camera.LensRadius;
+		float3 Offset = Camera.U * RandomPointOnLens.e[0] + Camera.V * RandomPointOnLens.e[1];
+
+		Ray R;
+		R.Origin = Camera.Origin + Offset;
+		R. Direction = Camera.LowerLeft + u * Camera.Horizontal + v * Camera.Vertical - Camera.Origin - Offset;
+		R.Time = Camera.BeginTime + drand48()*(Camera.EndTime - Camera.BeginTime);
+
 		float3 PixelColor = assign(0.0f, 0.0f, 0.0f);
 		FHit Hit;
-
-		Ray R = Rays[s];
 
 		if (Traverse(RootNode, R, 0.001f, FLT_MAX, Hit))
 		{
@@ -673,6 +674,8 @@ export void GetPixel(uniform ISPCBVHNode * uniform RootNode, uniform Ray Rays[],
 			PixelColor = PixelColor + ((1.0f - t) * StartColor + t * EndColor);
 		}
 
-		Pixels[s] = PixelColor;
+		FinalColor = FinalColor + PixelColor;
 	}
+
+	Pixel = assign(reduce_add(FinalColor.e[0]), reduce_add(FinalColor.e[1]), reduce_add(FinalColor.e[2]));
 }
