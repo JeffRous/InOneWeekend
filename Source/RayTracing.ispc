@@ -4,10 +4,7 @@
 
 static RNGState rngstate;
 
-struct float3
-{
-	float e[3];
-};
+typedef float<3> float3;
 
 enum EObjectType
 {
@@ -33,47 +30,46 @@ enum ETextureType
 
 struct Texture
 {
-	ETextureType Type;
-	float3 Color;
+	uniform float3 Color;
 
-	float3 ColorEven;
-	float3 ColorOdd;
+	uniform float3 ColorEven;
+	uniform float3 ColorOdd;
+	uniform ETextureType Type;
 };
 
 struct Material
 {
-	EMaterialType Type;
-	Texture Albedo;
-	float Ri;
-	float Roughness;
+	uniform Texture Albedo;
+	uniform float Ri;
+	uniform float Roughness;
+	uniform EMaterialType Type;
 };
 
 struct Object
 {
-	EObjectType Type;
-
-	Material Mat;
-	float3 Center0, Center1;
-	float Time0, Time1;
-	float Radius;
+	uniform Material Mat;
+	uniform float3 Center0, Center1;
+	uniform float Time0, Time1;
+	uniform float Radius;
+	uniform EObjectType Type;
 };
 
 struct BoundingBox
 {
-	float3 Min;
-	float3 Max;
+	uniform float3 Min;
+	uniform float3 Max;
 };
 
 struct ISPCBVHNode
 {
-	BoundingBox Box;
+	uniform BoundingBox Box;
 
-	EObjectType ObjectType;
-	Object *Obj;
+	uniform EObjectType ObjectType;
+	uniform Object *Obj;
 
-	ISPCBVHNode* Parent;
-	ISPCBVHNode* Left;
-	ISPCBVHNode* Right;
+	uniform ISPCBVHNode* Parent;
+	uniform ISPCBVHNode* Left;
+	uniform ISPCBVHNode* Right;
 };
 
 struct FHit
@@ -86,13 +82,13 @@ struct FHit
 
 struct FCamera
 {
-	float3 Origin;
-	float3 LowerLeft;
-	float3 Horizontal;
-	float3 Vertical;
-	float3 U, V, W;
-	float LensRadius;
-	float BeginTime, EndTime;
+	uniform float3 Origin;
+	uniform float3 LowerLeft;
+	uniform float3 Horizontal;
+	uniform float3 Vertical;
+	uniform float3 U, V, W;
+	uniform float LensRadius;
+	uniform float BeginTime, EndTime;
 };
 
 struct Ray
@@ -109,162 +105,117 @@ static inline void swap(float& a, float& b)
 	b = t;
 }
 
-static inline float dot(float3 v1, float3 v2)
+static inline float dot(const float3 &v1, const float3 &v2)
 {
-	return v1.e[0] * v2.e[0] + v1.e[1] * v2.e[1] + v1.e[2] * v2.e[2];
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
-static inline float3 mul(float3 v, float t)
+static inline float3 operator+(const float3 &v1, const float3 &v2)
 {
 	float3 ret;
-	ret.e[0] = v.e[0] * t;
-	ret.e[1] = v.e[1] * t;
-	ret.e[2] = v.e[2] * t;
+	ret.x = v1.x + v2.x;
+	ret.y = v1.y + v2.y;
+	ret.z = v1.z + v2.z;
 	return ret;
 }
 
-static inline float3 mul(float3 v1, float3 v2)
+static inline float3 operator-(const float3 &v1, const float3 &v2)
 {
 	float3 ret;
-	ret.e[0] = v1.e[0] * v2.e[0];
-	ret.e[1] = v1.e[1] * v2.e[1];
-	ret.e[2] = v1.e[2] * v2.e[2];
+	ret.x = v1.x - v2.x;
+	ret.y = v1.y - v2.y;
+	ret.z = v1.z - v2.z;
 	return ret;
 }
 
-static inline float3 add(float3 v, float t)
+static inline float3 operator*(const float3 &v1, const float3 &v2)
 {
 	float3 ret;
-	ret.e[0] = v.e[0] + t;
-	ret.e[1] = v.e[1] + t;
-	ret.e[2] = v.e[2] + t;
+	ret.x = v1.x * v2.x;
+	ret.y = v1.y * v2.y;
+	ret.z = v1.z * v2.z;
 	return ret;
 }
 
-static inline float3 add(float3 v1, float3 v2)
+static inline float3 operator/(const float3 &v1, const float3 &v2)
 {
 	float3 ret;
-	ret.e[0] = v1.e[0] + v2.e[0];
-	ret.e[1] = v1.e[1] + v2.e[1];
-	ret.e[2] = v1.e[2] + v2.e[2];
+	ret.x = v1.x / v2.x;
+	ret.y = v1.y / v2.y;
+	ret.z = v1.z / v2.z;
 	return ret;
 }
 
-static inline float3 sub(float3 v1, float3 v2)
+static inline float3 operator*(const float3 &v, const float t)
 {
 	float3 ret;
-	ret.e[0] = v1.e[0] - v2.e[0];
-	ret.e[1] = v1.e[1] - v2.e[1];
-	ret.e[2] = v1.e[2] - v2.e[2];
+	ret.x = v.x * t;
+	ret.y = v.y * t;
+	ret.z = v.z * t;
 	return ret;
 }
 
-inline float3 operator+(const float3 v1, const float3 v2)
+static inline float3 operator*(const float t, const float3 &v)
 {
 	float3 ret;
-	ret.e[0] = v1.e[0] + v2.e[0];
-	ret.e[1] = v1.e[1] + v2.e[1];
-	ret.e[2] = v1.e[2] + v2.e[2];
+	ret.x = v.x * t;
+	ret.y = v.y * t;
+	ret.z = v.z * t;
 	return ret;
 }
 
-inline float3 operator-(const float3 v1, const float3 v2)
+static inline float3 operator/(const float3 &v, const float t)
 {
 	float3 ret;
-	ret.e[0] = v1.e[0] - v2.e[0];
-	ret.e[1] = v1.e[1] - v2.e[1];
-	ret.e[2] = v1.e[2] - v2.e[2];
+	ret.x = v.x / t;
+	ret.y = v.y / t;
+	ret.z = v.z / t;
 	return ret;
 }
 
-inline float3 operator*(const float3 v1, const float3 v2)
+static inline float3 operator/(const float t, const float3 &v)
 {
 	float3 ret;
-	ret.e[0] = v1.e[0] * v2.e[0];
-	ret.e[1] = v1.e[1] * v2.e[1];
-	ret.e[2] = v1.e[2] * v2.e[2];
+	ret.x = t / v.x;
+	ret.y = t / v.y;
+	ret.z = t / v.z;
 	return ret;
 }
 
-inline float3 operator/(const float3 v1, const float3 v2)
+static inline float3 assign(const float x, const float y, const float z)
 {
 	float3 ret;
-	ret.e[0] = v1.e[0] / v2.e[0];
-	ret.e[1] = v1.e[1] / v2.e[1];
-	ret.e[2] = v1.e[2] / v2.e[2];
+	ret.x = x;
+	ret.y = y;
+	ret.z = z;
 	return ret;
 }
 
-inline float3 operator*(const float3 v, float t)
-{
-	float3 ret;
-	ret.e[0] = v.e[0] * t;
-	ret.e[1] = v.e[1] * t;
-	ret.e[2] = v.e[2] * t;
-	return ret;
-}
-
-inline float3 operator*(float t, const float3 v)
-{
-	float3 ret;
-	ret.e[0] = v.e[0] * t;
-	ret.e[1] = v.e[1] * t;
-	ret.e[2] = v.e[2] * t;
-	return ret;
-}
-
-inline float3 operator/(const float3 v, float t)
-{
-	float3 ret;
-	ret.e[0] = v.e[0] / t;
-	ret.e[1] = v.e[1] / t;
-	ret.e[2] = v.e[2] / t;
-	return ret;
-}
-
-inline float3 operator/(float t, const float3 v)
-{
-	float3 ret;
-	ret.e[0] = t / v.e[0];
-	ret.e[1] = t / v.e[1];
-	ret.e[2] = t / v.e[2];
-	return ret;
-}
-
-inline float3 assign(float x, float y, float z)
-{
-	float3 ret;
-	ret.e[0] = x;
-	ret.e[1] = y;
-	ret.e[2] = z;
-	return ret;
-}
-
-inline uniform float3 assign(uniform float x, uniform float y, uniform float z)
+static inline uniform float3 assign(const uniform float x, const uniform float y, const uniform float z)
 {
 	uniform float3 ret;
-	ret.e[0] = x;
-	ret.e[1] = y;
-	ret.e[2] = z;
+	ret.x = x;
+	ret.y = y;
+	ret.z = z;
 	return ret;
 }
 
-inline float Length(float3 v)
+static inline float Length(const float3 &v)
 {
-	return sqrt(v.e[0] * v.e[0] + v.e[1] * v.e[1] + v.e[2] * v.e[2]);
+	return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-inline float SquaredLength(float3 v)
+static inline float SquaredLength(const float3 &v)
 {
-	return v.e[0] * v.e[0] + v.e[1] * v.e[1] + v.e[2] * v.e[2];
+	return v.x * v.x + v.y * v.y + v.z * v.z;
 }
 
-inline float3 UnitVector(float3 v)
+static inline float3 UnitVector(const float3 &v)
 {
 	return v / Length(v);
 }
 
-inline Ray MakeRay(float3 Origin, float3 Direction, float Time)
+inline Ray MakeRay(const float3 &Origin, const float3 &Direction, const float Time)
 {
 	Ray R;
 	R.Origin = Origin;
@@ -278,16 +229,14 @@ static inline float drand48()
 	return frandom(&rngstate);
 }
 
-static inline float3 RandomInUnitDisk()
+static float3 RandomInUnitDisk()
 {
 	float3 P;
 
 	do
 	{
-		P.e[0] = (2.0f * drand48()) - 1.0f;
-		P.e[1] = (2.0f * drand48()) - 1.0f;
-		P.e[2] = 0.0f;
-	} while (dot(P,P) >= 1.0f);
+		P = 2.f*assign(drand48(), drand48(), 0.f) - assign(1.f, 1.f, 0.f);
+	} while (dot(P,P) >= 1.f);
 
 	return P;
 }
@@ -304,21 +253,23 @@ static inline float3 RandomInUnitSphere()
 	return P;
 }
 
-export void GetRays(uniform Ray Rays[], uniform FCamera &Camera, uniform int Samples, uniform int i, uniform int Width, uniform int j, uniform int Height)
+export void GetRays(uniform Ray Rays[], const uniform FCamera& Camera, uniform int Samples, uniform int i, uniform int Width, uniform int j, uniform int Height)
 {
 	seed_rng(&rngstate, programIndex + (i << (programIndex & 15)));
 
 	foreach(s = 0 ... Samples)
 	{
-		float u = (i + frandom(&rngstate)) / Width;
-		float v = (j + frandom(&rngstate)) / Height;
+		float u = (i + drand48()) / Width;
+		float v = (j + drand48()) / Height;
 
-		float3 RandomPointOnLens = mul(RandomInUnitDisk(), Camera.LensRadius);
-		float3 Offset = add(mul(Camera.U, RandomPointOnLens.e[0]), mul(Camera.V, RandomPointOnLens.e[1]));
+		float3 RandomPointOnLens = Camera.LensRadius * RandomInUnitDisk();
+		float3 Offset = Camera.U * RandomPointOnLens.x + Camera.V * RandomPointOnLens.y;
 
-		Rays[s].Origin = add(Camera.Origin, Offset);
-		Rays[s].Direction = sub(sub(add(add(mul(Camera.Horizontal, u), Camera.LowerLeft), mul(Camera.Vertical, v)), Camera.Origin), Offset);
-		Rays[s].Time = Camera.BeginTime + frandom(&rngstate)*(Camera.EndTime - Camera.BeginTime);
+		float3 Origin = Camera.Origin + Offset;
+		float3 Direction = Camera.LowerLeft + (u * Camera.Horizontal) + (v * Camera.Vertical) - Camera.Origin - Offset;
+		float Time = Camera.BeginTime + drand48()*(Camera.EndTime - Camera.BeginTime);
+
+		Rays[s] = MakeRay(Origin, Direction, Time);
 	}
 }
 
@@ -328,29 +279,29 @@ bool IntersectBox(const uniform BoundingBox* uniform B, const Ray& R, float TMin
 	float3 T0 = (B->Min - R.Origin) * InvD;
 	float3 T1 = (B->Max - R.Origin) * InvD;
 
-	if(InvD.e[0] < 0.0f)
+	if(InvD.x < 0.0f)
 	{
-		swap(T0.e[0], T1.e[0]);
+		swap(T0.x, T1.x);
 	}
 
-	TMin = max(T0.e[0], TMin);
-	TMax = min(T1.e[0], TMax);
+	TMin = max(T0.x, TMin);
+	TMax = min(T1.x, TMax);
 
-	if(InvD.e[1] < 0.0f)
+	if(InvD.y < 0.0f)
 	{
-		swap(T0.e[1], T1.e[1]);
+		swap(T0.y, T1.y);
 	}
 
-	TMin = max(T0.e[1], TMin);
-	TMax = min(T1.e[1], TMax);
+	TMin = max(T0.y, TMin);
+	TMax = min(T1.y, TMax);
 
-	if(InvD.e[2] < 0.0f)
+	if(InvD.z < 0.0f)
 	{
-		swap(T0.e[2], T1.e[2]);
+		swap(T0.z, T1.z);
 	}
 
-	TMin = max(T0.e[2], TMin);
-	TMax = min(T1.e[2], TMax);
+	TMin = max(T0.z, TMin);
+	TMax = min(T1.z, TMax);
 
 	return (TMin <= TMax);
 }
@@ -365,7 +316,7 @@ float3 Sample(const Texture* T, const float3& p)
 	}
 	else if (T->Type == Checker)
 	{
-		float Sines = sin(10 * p.e[0])*sin(10 * p.e[1])*sin(10 * p.e[2]);
+		float Sines = sin(10 * p.x)*sin(10 * p.y)*sin(10 * p.z);
 
 		if (Sines < 0)
 		{
@@ -616,7 +567,7 @@ bool MaterialScatter(const Material* Mat, const Ray& InRay, const FHit& Hit, flo
 	return RetVal;
 }
 
-export void GetPixel(uniform ISPCBVHNode* uniform RootNode, uniform FCamera &Camera, uniform float3& Pixel, uniform int Samples, uniform int i, uniform int Width, uniform int j, uniform int Height)
+export void GetPixel(uniform ISPCBVHNode* uniform RootNode, const uniform FCamera &Camera, uniform float3& Pixel, uniform int Samples, uniform int i, uniform int Width, uniform int j, uniform int Height)
 {
 	seed_rng(&rngstate, programIndex + (i << (programIndex & 15)));
 
@@ -630,7 +581,7 @@ export void GetPixel(uniform ISPCBVHNode* uniform RootNode, uniform FCamera &Cam
 		float v = (j + drand48()) / Height;
 
 		float3 RandomPointOnLens = RandomInUnitDisk() * Camera.LensRadius;
-		float3 Offset = Camera.U * RandomPointOnLens.e[0] + Camera.V * RandomPointOnLens.e[1];
+		float3 Offset = Camera.U * RandomPointOnLens.x + Camera.V * RandomPointOnLens.y;
 
 		Ray R;
 		R.Origin = Camera.Origin + Offset;
@@ -657,7 +608,7 @@ export void GetPixel(uniform ISPCBVHNode* uniform RootNode, uniform FCamera &Cam
 				if (!Traverse(RootNode, Scattered, 0.001f, FLT_MAX, Hit))
 				{
 					float3 UnitDirection = UnitVector(Scattered.Direction);
-					float t = 0.5f * (UnitDirection.e[1] + 1.0f);
+					float t = 0.5f * (UnitDirection.y + 1.0f);
 					Sum = Sum * ((1.0f - t) * StartColor + t * EndColor);
 					PixelColor = PixelColor + Sum;
 					break;
@@ -670,12 +621,12 @@ export void GetPixel(uniform ISPCBVHNode* uniform RootNode, uniform FCamera &Cam
 		else
 		{
 			float3 UnitDirection = UnitVector(R.Direction);
-			float t = 0.5f * (UnitDirection.e[1] + 1.0f);
+			float t = 0.5f * (UnitDirection.y + 1.0f);
 			PixelColor = PixelColor + ((1.0f - t) * StartColor + t * EndColor);
 		}
 
 		FinalColor = FinalColor + PixelColor;
 	}
 
-	Pixel = assign(reduce_add(FinalColor.e[0]), reduce_add(FinalColor.e[1]), reduce_add(FinalColor.e[2]));
+	Pixel = assign(reduce_add(FinalColor.x), reduce_add(FinalColor.y), reduce_add(FinalColor.z));
 }

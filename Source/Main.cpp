@@ -177,7 +177,7 @@ int main()
 {
 	InitTiming();
 
-	uint8 *ImageBuffer = new uint8[WIDTH * HEIGHT * PIXEL_COMPONENTS];
+	uint8 *ImageBuffer = (uint8*)_aligned_malloc(WIDTH * HEIGHT * PIXEL_COMPONENTS * sizeof(uint8), ALIGNMENT);
 	uint8 *ImageBufferWriter = ImageBuffer;
 
 	IObject *World = RandomWorld();
@@ -271,9 +271,7 @@ int main()
 	ImageFileWriter::WriteImage("output.png", ImageWriterType::PNG, WIDTH, HEIGHT, PIXEL_COMPONENTS, ImageBuffer);
 	DebugPrint(L"Ray traversal time: %lf s \n", Elapsed/1000.0);
 
-	delete World;
-
-	delete ImageBuffer;
+	_aligned_free(ImageBuffer);
 	ImageBuffer = nullptr;
 	ImageBufferWriter = nullptr;
 

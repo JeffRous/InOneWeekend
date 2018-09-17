@@ -4,12 +4,12 @@
 #include "utils/Types.h"
 #include "ISPCDefines.h"
 
-class FVector
+class alignas(ALIGNMENT) FVector
 {
 public:
 	FVector() {}
 	FVector(const FVector &v) { e[0] = v.e[0]; e[1] = v.e[1]; e[2] = v.e[2]; }
-	FVector(const ispc::float3 &v) { e[0] = v.e[0]; e[1] = v.e[1]; e[2] = v.e[2]; }
+	FVector(const ispc::float3 &v) { e[0] = v.v[0]; e[1] = v.v[1]; e[2] = v.v[2]; }
 	FVector(float e0, float e1, float e2) { e[0] = e0; e[1] = e1; e[2] = e2; }
 
 	inline const FVector& operator+() const { return *this; }
@@ -30,7 +30,7 @@ public:
 	inline float SquaredLength() const { return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; }
 	inline void Normalize();
 
-	__declspec (align(16)) union
+	__declspec (align(ALIGNMENT)) union
 	{
 		struct
 		{
@@ -163,9 +163,9 @@ inline FVector::operator ispc::float3()
 {
 	ispc::float3 t;
 
-	t.e[0] = e[0];
-	t.e[1] = e[1];
-	t.e[2] = e[2];
+	t.v[0] = e[0];
+	t.v[1] = e[1];
+	t.v[2] = e[2];
 	return t;
 }
 
@@ -173,8 +173,8 @@ inline FVector::operator ispc::float3() const
 {
 	ispc::float3 t;
 
-	t.e[0] = e[0];
-	t.e[1] = e[1];
-	t.e[2] = e[2];
+	t.v[0] = e[0];
+	t.v[1] = e[1];
+	t.v[2] = e[2];
 	return t;
 }

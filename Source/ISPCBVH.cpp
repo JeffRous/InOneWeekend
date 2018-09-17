@@ -7,7 +7,7 @@
 
 ispc::ISPCBVHNode *CreateISPCBVHNode(IObject** List, int32 ListSize, ispc::ISPCBVHNode* Parent, float BeginTime, float EndTime)
 {
-	ispc::ISPCBVHNode *Node = new ispc::ISPCBVHNode;
+	ispc::ISPCBVHNode *Node = (ispc::ISPCBVHNode*)_aligned_malloc(sizeof(ispc::ISPCBVHNode), ALIGNMENT);
 	Node->ObjectType = ispc::BVH;
 	Node->Left = nullptr;
 	Node->Right = nullptr;

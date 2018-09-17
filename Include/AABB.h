@@ -3,7 +3,7 @@
 #include "FVector.h"
 #include "Ray.h"
 
-class AABB
+class alignas(ALIGNMENT) AABB
 {
 public:
 	AABB() {}

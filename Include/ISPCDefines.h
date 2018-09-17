@@ -1,6 +1,9 @@
 #pragma once
 
 #include "RayTracing_ispc.h"
+#include <algorithm>
+
+#define ALIGNMENT 32
 
 /* Keep these around if not using ISPC
 enum class EObjectType

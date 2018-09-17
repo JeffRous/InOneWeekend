@@ -36,8 +36,8 @@ bool IntersectBox(const ispc::BoundingBox& B, const Ray& R, float TMin, float TM
 	for (int32 i = 0; i < 3; i++)
 	{
 		float InvD = 1.0f / Direction[i];
-		float T0 = (B.Min.e[i] - Origin[i]) * InvD;
-		float T1 = (B.Max.e[i] - Origin[i]) * InvD;
+		float T0 = (B.Min.v[i] - Origin[i]) * InvD;
+		float T1 = (B.Max.v[i] - Origin[i]) * InvD;
 
 		if (InvD < 0.0f)
 		{

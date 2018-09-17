@@ -16,7 +16,7 @@ public:
 	virtual ispc::Material* GetMaterial() = 0;
 };
 
-class Lambertian : public IMaterial
+class alignas(ALIGNMENT) Lambertian : public IMaterial
 {
 public:
 	Lambertian(ITexture *t)
@@ -25,13 +25,28 @@ public:
 		Mat.Type = ispc::Lambertian;
 	}
 
+	static void *operator new(size_t Bytes)
+	{
+		if (void* p = _aligned_malloc(Bytes, alignof(Lambertian)))
+		{
+			return p;
+		}
+
+		return nullptr;
+	}
+
+	static void operator delete(void *p)
+	{
+		_aligned_free(p);
+	}
+
 	virtual bool Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const;
 	virtual ispc::Material* GetMaterial() { return &Mat; }
 private:
 	ispc::Material Mat;
 };
 
-class Metal : public IMaterial
+class alignas(ALIGNMENT) Metal : public IMaterial
 {
 public:
 	Metal(ITexture *t, float InRoughness)
@@ -41,19 +56,49 @@ public:
 		Mat.Type = ispc::Metal;
 	}
 
+	static void *operator new(size_t Bytes)
+	{
+		if (void* p = _aligned_malloc(Bytes, alignof(Lambertian)))
+		{
+			return p;
+		}
+
+		return nullptr;
+	}
+
+	static void operator delete(void *p)
+	{
+		_aligned_free(p);
+	}
+
 	virtual bool Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const;
 	virtual ispc::Material* GetMaterial() { return &Mat; }
 private:
 	ispc::Material Mat;
 };
 
-class Dielectric : public IMaterial
+class alignas(ALIGNMENT) Dielectric : public IMaterial
 {
 public:
 	Dielectric(float InRefIndex)
 	{
 		Mat.Ri = InRefIndex;
 		Mat.Type = ispc::Dielectric;
+	}
+
+	static void *operator new(size_t Bytes)
+	{
+		if (void* p = _aligned_malloc(Bytes, alignof(Dielectric)))
+		{
+			return p;
+		}
+
+		return nullptr;
+	}
+
+	static void operator delete(void *p)
+	{
+		_aligned_free(p);
 	}
 
 	virtual bool Scatter(const Ray& InRay, const FHit& Hit, FVector& Attenuation, Ray& Scattered) const;

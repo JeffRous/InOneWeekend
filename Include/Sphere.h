@@ -3,7 +3,7 @@
 #include "Object.h"
 #include "Material.h"
 
-class Sphere : public IObject
+class alignas(ALIGNMENT) Sphere : public IObject
 {
 public:
 	Sphere() {}
@@ -18,6 +18,21 @@ public:
 		Obj.Mat = *InMaterial->GetMaterial();
 	}
 
+	static void *operator new(size_t Bytes)
+	{
+		if (void* p = _aligned_malloc(Bytes, alignof(Sphere)))
+		{
+			return p;
+		}
+
+		return nullptr;
+	}
+
+	static void operator delete(void *p)
+	{
+		_aligned_free(p);
+	}
+
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
 	virtual bool BoundingBox(float T0, float T1, AABB& Box) const;
 
@@ -29,7 +44,7 @@ private:
 	ispc::Object Obj;
 };
 
-class MovingSphere : public IObject
+class alignas(ALIGNMENT) MovingSphere : public IObject
 {
 public:
 	MovingSphere() {}
@@ -42,6 +57,21 @@ public:
 		Obj.Radius = InRadius;
 		Obj.Type = ispc::MovingSphere;
 		Obj.Mat = *InMaterial->GetMaterial();
+	}
+
+	static void *operator new(size_t Bytes)
+	{
+		if (void* p = _aligned_malloc(Bytes, alignof(MovingSphere)))
+		{
+			return p;
+		}
+
+		return nullptr;
+	}
+
+	static void operator delete(void *p)
+	{
+		_aligned_free(p);
 	}
 
 	virtual bool Hit(const Ray& R, float TMin, float TMax, FHit& Hit) const;
