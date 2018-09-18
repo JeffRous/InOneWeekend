@@ -3,7 +3,7 @@
 #include "RayTracing_ispc.h"
 #include <algorithm>
 
-#define ALIGNMENT 32
+#define ALIGNMENT 64
 
 /* Keep these around if not using ISPC
 enum class EObjectType

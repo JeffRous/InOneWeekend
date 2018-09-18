@@ -14,8 +14,8 @@
 #include "ISPCBVH.h"
 #include "ISPCDefines.h"
 
-#define WIDTH 200
-#define HEIGHT 100
+#define WIDTH 2000
+#define HEIGHT 1000
 #define SAMPLES 100
 #define PIXEL_COMPONENTS 3
 #define MAX_BOUNCES 50

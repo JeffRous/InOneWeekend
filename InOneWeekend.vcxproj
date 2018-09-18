@@ -57,14 +57,14 @@
   <ItemGroup>
     <CustomBuild Include="Source\RayTracing.ispc">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)ThirdParty\ispc\ispc -O0 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=avx2 -g --opt=fast-math</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)ThirdParty\ispc\ispc -O2 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=avx2 --opt=fast-math</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)ThirdParty\ispc\ispc -O0 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=avx2 -g --opt=fast-math</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)ThirdParty\ispc\ispc -O2 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=avx2 --opt=fast-math</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename).obj;</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename).obj;</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)ThirdParty\ispc\ispc -O0 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=avx512skx-i32x16,avx2,sse4 -g --opt=fast-math</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)ThirdParty\ispc\ispc -O2 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=avx512skx-i32x16,avx2,sse4 --opt=fast-math</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)ThirdParty\ispc\ispc -O0 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=avx512skx-i32x16,avx2,sse4 -g --opt=fast-math</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)ThirdParty\ispc\ispc -O2 "%(FullPath)" -o "$(IntDir)%(Filename).obj" -h "$(ProjectDir)Include\%(Filename)_ispc.h" --target=avx512skx-i32x16,avx2,sse4 --opt=fast-math</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename).obj;$(IntDir)%(Filename)_avx512skx.obj;$(IntDir)%(Filename)_avx2.obj;$(IntDir)%(Filename)_sse4.obj;</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename).obj;$(IntDir)%(Filename)_avx512skx.obj;$(IntDir)%(Filename)_avx2.obj;$(IntDir)%(Filename)_sse4.obj;</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;$(IntDir)%(Filename)_avx512skx.obj;$(IntDir)%(Filename)_avx2.obj;$(IntDir)%(Filename)_sse4.obj;</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;$(IntDir)%(Filename)_avx512skx.obj;$(IntDir)%(Filename)_avx2.obj;$(IntDir)%(Filename)_sse4.obj;</Outputs>
       <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
       <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</TreatOutputAsContent>
       <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
