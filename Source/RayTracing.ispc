@@ -2,7 +2,7 @@
 #define MAX_BOUNCES 50
 #define MAX_BVH_DEPTH 64
 
-static RNGState rngstate;
+static unsigned int rngstate;
 
 typedef float<3> float3;
 
@@ -74,9 +74,9 @@ struct ISPCBVHNode
 
 struct FHit
 {
-	float T; // Ray parameter
 	float3 P; // 3D Point on ray
 	float3 Normal;
+	float T; // Ray parameter
 	Material *Mat;
 };
 
@@ -184,30 +184,24 @@ static inline float3 operator/(const float t, const float3 &v)
 
 static inline float3 assign(const float x, const float y, const float z)
 {
-	float3 ret;
-	ret.x = x;
-	ret.y = y;
-	ret.z = z;
+	float3 ret = {x, y, z};
 	return ret;
 }
 
 static inline uniform float3 assign(const uniform float x, const uniform float y, const uniform float z)
 {
-	uniform float3 ret;
-	ret.x = x;
-	ret.y = y;
-	ret.z = z;
+	uniform float3 ret = {x, y, z};
 	return ret;
 }
 
 static inline float Length(const float3 &v)
 {
-	return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+	return sqrt(dot(v,v));
 }
 
 static inline float SquaredLength(const float3 &v)
 {
-	return v.x * v.x + v.y * v.y + v.z * v.z;
+	return dot(v,v);
 }
 
 static inline float3 UnitVector(const float3 &v)
@@ -215,47 +209,50 @@ static inline float3 UnitVector(const float3 &v)
 	return v / Length(v);
 }
 
-inline Ray MakeRay(const float3 &Origin, const float3 &Direction, const float Time)
+Ray MakeRay(const float3 &Origin, const float3 &Direction, const float Time)
 {
-	Ray R;
-	R.Origin = Origin;
-	R.Direction = Direction;
-	R.Time = Time;
+	Ray R = {Origin, Direction, Time};
 	return R;
 }
 
 static inline float drand48()
 {
-	return frandom(&rngstate);
+	unsigned int x = rngstate;
+	x ^= x << 13;
+	x ^= x >> 17;
+	x ^= x << 15;
+	rngstate = x;
+	return (int)(x & 0xFFFFFF) / 16777216.0f;
 }
 
 static float3 RandomInUnitDisk()
 {
-	float3 P;
-
-	do
-	{
-		P = 2.f*assign(drand48(), drand48(), 0.f) - assign(1.f, 1.f, 0.f);
-	} while (dot(P,P) >= 1.f);
-
-	return P;
+	float a = drand48() * 2.0f * PI;
+	float x, y;
+	sincos(a, &x, &y);
+	float d = sqrt(drand48());
+	x *= d;
+	y *= d;
+	return assign(x,y,0);
 }
 
 static inline float3 RandomInUnitSphere()
 {
-	float3 P;
-
-	do
-	{
-		P = 2.0f*assign(drand48(), drand48(), drand48()) - assign(1, 1, 1);
-	} while (SquaredLength(P) >= 1.0f);
-
-	return P;
+	float z = drand48() * 2.0f - 1.0f;
+	float t = drand48() * 2.0f * PI;
+	float r = sqrt(max(0.0, 1.0f - z*z));
+	float x, y;
+	sincos(t, &x, &y);
+	x *= r;
+	y *= r;
+	float3 res = {x,y,z};
+	res *= pow(drand48(), 1.0/3.0);
+	return res;
 }
 
 export void GetRays(uniform Ray Rays[], const uniform FCamera& Camera, uniform int Samples, uniform int i, uniform int Width, uniform int j, uniform int Height)
 {
-	seed_rng(&rngstate, programIndex + (i << (programIndex & 15)));
+	rngstate = programIndex + (i << (programIndex & 15));
 
 	foreach(s = 0 ... Samples)
 	{
@@ -357,8 +354,6 @@ float3 GetCenterAt(uniform ISPCBVHNode * uniform Node, float Time)
 
 bool RayIntersect(const Ray& R, uniform ISPCBVHNode* uniform Node, float TMin, float TMax, FHit& Hit)
 {
-	bool RetVal = false;
-
 	float3 GetCenterAtTime = GetCenterAt(Node, R.Time);
 	float3 Oc = R.Origin - GetCenterAtTime;
 
@@ -367,38 +362,35 @@ bool RayIntersect(const Ray& R, uniform ISPCBVHNode* uniform Node, float TMin, f
 	float c = dot(Oc, Oc) - Node->Obj->Radius * Node->Obj->Radius;
 	float Discriminant = b * b - a * c;
 
-	if (Discriminant > 0)
+	cif (Discriminant > 0)
 	{
 		float DiscSqrt = sqrt(Discriminant);
 		float Temp = (-b - DiscSqrt) / a;
 
-		if (Temp < TMax && Temp > TMin)
+		cif (Temp < TMax && Temp > TMin)
 		{
 			Hit.T = Temp;
 			Hit.P = R.Origin + Temp * R.Direction;
 			Hit.Normal = (Hit.P - GetCenterAtTime) / Node->Obj->Radius;
 			Hit.Mat = &Node->Obj->Mat;
 
-			RetVal = true;
+			return true;
 		}
 
-		if(!RetVal)
+		Temp = (-b + DiscSqrt) / a;
+
+		cif (Temp < TMax && Temp > TMin)
 		{
-			Temp = (-b + DiscSqrt) / a;
+			Hit.T = Temp;
+			Hit.P = R.Origin + Temp * R.Direction;
+			Hit.Normal = (Hit.P - GetCenterAtTime) / Node->Obj->Radius;
+			Hit.Mat = &Node->Obj->Mat;
 
-			if (Temp < TMax && Temp > TMin)
-			{
-				Hit.T = Temp;
-				Hit.P = R.Origin + Temp * R.Direction;
-				Hit.Normal = (Hit.P - GetCenterAtTime) / Node->Obj->Radius;
-				Hit.Mat = &Node->Obj->Mat;
-
-				RetVal = true;
-			}
+			return true;
 		}
 	}
 
-	return RetVal;
+	return false;
 }
 
 inline uniform ISPCBVHNode* uniform NearChild(uniform ISPCBVHNode * uniform Current)
@@ -471,12 +463,12 @@ bool Traverse(uniform ISPCBVHNode* uniform RootNode, const Ray& R, float TMin, f
 	return bHit;
 }
 
-static float3 Reflect(const float3& V, const float3& N)
+static inline float3 Reflect(const float3& V, const float3& N)
 {
 	return V - 2 * dot(V, N) * N;
 }
 
-static float Schlick(float Cosine, float RefIndex)
+static inline float Schlick(float Cosine, float RefIndex)
 {
 	float R0 = (1 - RefIndex) / (1 + RefIndex);
 	R0 = R0 * R0;
@@ -500,7 +492,7 @@ static bool Refract(const float3& V, const float3& N, float NiOverNt, float3& Re
 	}
 }
 
-bool MaterialScatter(const Material* Mat, const Ray& InRay, const FHit& Hit, float3& Attenuation, Ray& Scattered)
+bool MaterialScatter(const uniform Material* Mat, const Ray& InRay, const FHit& Hit, float3& Attenuation, Ray& Scattered)
 {
 	bool RetVal = false;
 
@@ -569,7 +561,7 @@ bool MaterialScatter(const Material* Mat, const Ray& InRay, const FHit& Hit, flo
 
 export void GetPixel(uniform ISPCBVHNode* uniform RootNode, const uniform FCamera &Camera, uniform float3& Pixel, uniform int Samples, uniform int i, uniform int Width, uniform int j, uniform int Height)
 {
-	seed_rng(&rngstate, programIndex + (i << (programIndex & 15)));
+	rngstate = programIndex + (i << (programIndex & 15));
 
 	const uniform float3 StartColor = assign(1.0f, 1.0f, 1.0f);
 	const uniform float3 EndColor = assign(0.5f, 0.7f, 1.0f);
